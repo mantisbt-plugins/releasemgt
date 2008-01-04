@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * ReleaseMgt plugin.
+ *
+ *
+ * Created: 2008-01-05
+ * Last update: 2008-01-05
+ *
+ * @link http://deboutv.free.fr/mantis/
+ * @author Vincent DEBOUT <deboutv@free.fr>
+ */
+
+/* Link string */
+
+$s_plugins_releasemgt_link = 'Download';
+$s_plugins_releasemgt_download_link = 'Download';
+
+/* Display page */
+
+$s_plugins_releasemgt_display_page_title = 'Download';
+$s_plugins_releasemgt_upload_title = 'Upload a file';
+
+/* Configuration page */
+
+$s_plugins_releasemgt_configuration_page_title = 'ReleaseMgt Plugin Configuration';
+$s_plugins_releasemgt_configuration_for_project = 'Configuration for %%project%% project.';
+$s_plugins_releasemgt_upload_access_level = 'Upload access level';
+$s_plugins_releasemgt_upload_method = 'Upload method';
+$s_plugins_releasemgt_method_disk = 'Disk';
+$s_plugins_releasemgt_method_database = 'Database';
+$s_plugins_releasemgt_method_ftp = 'FTP';
+$s_plugins_releasemgt_disk_path = 'Disk directory (only if upload method is Disk)';
+$s_plugins_releasemgt_ftp_server = 'FTP Server (only if upload method is FTP)';
+$s_plugins_releasemgt_ftp_user = 'FTP User (only if upload method is FTP)';
+$s_plugins_releasemgt_ftp_pass = 'FTP Password (only if upload method is FTP)';
+$s_plugins_releasemgt_notification_enable = 'Enable email notification';
+$s_plugins_releasemgt_notify_handler = 'Notify handler';
+$s_plugins_releasemgt_notify_reporter = 'Notify reporter';
+$s_plugins_releasemgt_notify_email = 'Emails (separated by \',\')';
+$s_plugins_releasemgt_email_template = 'Email template';
+
+/* Email */
+
+$s_plugins_releasemgt_email_subject = 'A new file is available to download';
+
+?>
