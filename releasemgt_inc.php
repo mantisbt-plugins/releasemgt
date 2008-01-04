@@ -5,7 +5,7 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-01-07
+ * Last update: 2008-02-04
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
@@ -72,7 +72,7 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
     </tr>
     <tr class="row-2">
       <td class="category" width="15%">
-        <span class="required">*</span><?php echo lang_get( 'product_version' ) ?>
+        <?php echo lang_get( 'product_version' ) ?>
       </td>
       <td width="85%">
         <select name="release">

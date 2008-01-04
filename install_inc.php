@@ -4,7 +4,7 @@
  * This file is used to install the plugin manually.
  *
  * Created: 2008-01-05
- * Last update: 2008-01-11
+ * Last update: 2008-02-04
  *
  * @link http://deboutv.free.fr/mantis/
  * @author Vincent DEBOUT <deboutv@free.fr>
@@ -69,7 +69,15 @@ function plugins_releasemgt_install_plugin( &$p_msg, $p_step ) {
         }
     } else if ( $p_step == 2 ) {
         $t_main_menu_custom_options = config_get( 'main_menu_custom_options', array() );
-        $t_main_menu_custom_options[] = array( 'plugins_releasemgt_link', VIEWER, 'plugins_page.php?plugin=releasemgt&display=releasemgt' );
+        $t_found = false;
+        foreach( $t_main_menu_custom_options as $t_menu_link ) {
+            if ( $t_menu_link[0] == 'plugins_releasemgt_link' ) {
+                $t_found = true;
+            }
+        }
+        if ( !$t_found ) {
+            $t_main_menu_custom_options[] = array( 'plugins_releasemgt_link', VIEWER, 'plugins_page.php?plugin=releasemgt&display=releasemgt' );
+        }
         config_set( 'main_menu_custom_options', $t_main_menu_custom_options );
     }
     return PLUGINS_PLUGINMANAGER_OK;

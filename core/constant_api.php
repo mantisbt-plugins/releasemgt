@@ -5,7 +5,7 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-01-09
+ * Last update: 2008-02-04
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
@@ -14,7 +14,7 @@
 
 define( 'PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT', ADMINISTRATOR );
 define( 'PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT', DISK );
-define( 'PLUGINS_RELEASEMGT_DISK_PATH_DEFAULT', '' );
+define( 'PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT', '' );
 define( 'PLUGINS_RELEASEMGT_FTP_SERVER_DEFAULT', '' );
 define( 'PLUGINS_RELEASEMGT_FTP_USER_DEFAULT', '' );
 define( 'PLUGINS_RELEASEMGT_FTP_PASS_DEFAULT', '' );

@@ -5,7 +5,7 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-01-09
+ * Last update: 2008-02-04
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
@@ -26,7 +26,7 @@ $t_action = gpc_get_string( 'action', 'none' );
 if ( $t_action == 'update' ) {
     $t_upload_access_level = gpc_get_int( 'upload_access_level' );
     $t_upload_method = gpc_get_int( 'upload_method' );
-    $t_disk_path = gpc_get_string( 'disk_path', PLUGINS_RELEASEMGT_DISK_PATH_DEFAULT );
+    $t_disk_dir = gpc_get_string( 'disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT );
     $t_ftp_server = gpc_get_string( 'ftp_server', PLUGINS_RELEASEMGT_FTP_SERVER_DEFAULT );
     $t_ftp_user = gpc_get_string( 'ftp_user', PLUGINS_RELEASEMGT_FTP_USER_DEFAULT );
     $t_ftp_pass = gpc_get_string( 'ftp_pass', PLUGINS_RELEASEMGT_FTP_PASS_DEFAULT );
@@ -37,7 +37,7 @@ if ( $t_action == 'update' ) {
     $t_email_template = gpc_get_string( 'email_template', PLUGINS_RELEASEMGT_EMAIL_TEMPLATE_DEFAULT );
     config_set( 'plugins_releasemgt_upload_threshold_level', $t_upload_access_level, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_upload_method', $t_upload_method, NO_USER, $t_project_id );
-    config_set( 'plugins_releasemgt_disk_path', $t_disk_path, NO_USER, $t_project_id );
+    config_set( 'plugins_releasemgt_disk_dir', $t_disk_dir, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_ftp_server', $t_ftp_server, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_ftp_user', $t_ftp_user, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_ftp_pass', $t_ftp_pass, NO_USER, $t_project_id );
@@ -111,7 +111,7 @@ html_page_top2();
           <span class="required">*</span><?php echo lang_get( 'plugins_releasemgt_disk_path' ); ?>
         </td>
         <td width="70%">
-          <input type="text" name="disk_path" size="30" value="<?php echo config_get( 'plugins_releasemgt_disk_path', PLUGINS_RELEASEMGT_DISK_PATH_DEFAULT ); ?>" />
+          <input type="text" name="disk_dir" size="30" value="<?php echo config_get( 'plugins_releasemgt_disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT ); ?>" />
         </td>
       </tr>
 

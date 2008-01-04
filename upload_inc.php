@@ -5,7 +5,7 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-01-09
+ * Last update: 2008-02-04
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
@@ -18,7 +18,7 @@ if ( !ereg( 'plugins_page.php', $_SERVER['PHP_SELF'] ) ) {
 }
 
 $t_file = gpc_get_file( 'file' );
-$t_version = gpc_get_int( 'release' );
+$t_version = gpc_get_int( 'release', 0 );
 $t_description = gpc_get_string( 'description', '' );
 
 $t_current_user_id = auth_get_current_user_id();
@@ -42,6 +42,22 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
     $t_template['file_description'] = $t_description;
     $t_template['file_html_description'] = string_display_links( $t_description );
     $t_template['file_url'] = config_get( 'path' ) . 'plugins_page.php?plugin=releasemgt&display=download&id=' . $t_file_id;
+    $t_template['project_id'] = $t_project_id;
+    $t_template['project_name'] = project_get_name( $t_project_id );
+    $t_template['version_id'] = $t_version;
+    if ( $t_version != 0 ) {
+        $t_template['version_name'] = version_get_field( $t_version, 'name' );
+        $t_template['version_description'] = version_get_field( $t_version, 'description' );
+        $t_template['version_date_order'] = version_get_field( $t_version, 'date_order' );
+    } else {
+        $t_template['version_name'] = '';
+        $t_template['version_description'] = '';
+        $t_template['version_date_order'] = '';
+    }
+    $t_template['user_id'] = $t_current_user_id;
+    $t_template['user_name'] = user_get_name( $t_current_user_id );
+    $t_template['user_realname'] = user_get_realname( $t_current_user_id );
+    $t_template['user_email'] = user_get_email( $t_current_user_id );
 
     $t_template_file = $t_template_dir . 'text_inc.php';
     ob_start();
@@ -71,7 +87,11 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
     }
     // Get reporter
     if ( config_get( 'plugins_releasemgt_notify_reporter', PLUGINS_RELEASEMGT_NOTIFY_REPORTER_DEFAULT ) == ON ) {
-        $t_query = 'SELECT reporter_id FROM ' . config_get( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'' . db_prepare_string( version_get_field( $t_version, 'version' ) ) . '\'';
+        if ( $t_version == 0 ) {
+            $t_query = 'SELECT reporter_id FROM ' . config_get( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'\'';
+        } else {
+            $t_query = 'SELECT reporter_id FROM ' . config_get( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'' . db_prepare_string( version_get_field( $t_version, 'version' ) ) . '\'';
+        }
         $t_result = db_query( $t_query );
         while( $t_row = db_fetch_array( $t_result ) ) {
             $t_id_list[] = $t_row['reporter_id'];
@@ -89,8 +109,13 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
         }
     }
     $t_email_ids = array_unique( $t_id_list );
-    
-    if ( version_compare( config_get( 'mantis_version' ), '1.1.0a2', '>=' ) ) {
+
+    if ( defined( 'MANTIS_VERSION' ) ) {
+        $t_mantis_version = MANTIS_VERSION;
+    } else {
+        $t_mantis_version = config_get( 'mantis_version' );
+    }
+    if ( version_compare( $t_mantis_version, '1.1.0a2', '>=' ) ) {
         foreach( $t_email_ids as $t_email ) {
             $t_recipient = trim( $t_email );
             $t_subject = string_email( trim( $t_subject ) );
