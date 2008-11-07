@@ -5,11 +5,11 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-01-09
+ * Last update: 2008-11-08
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
- * @author Vincent DEBOUT <deboutv@free.fr>
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  */
 
 require_once( $t_core_path . 'file_api.php' );
@@ -143,7 +143,7 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
     $c_title = db_prepare_string( $p_file_name );
     $c_desc = db_prepare_string( $p_description );
 
-    $t_file_path = config_get( 'plugins_releasemgt_disk_path', PLUGINS_RELEASEMGT_DISK_PATH_DEFAULT );
+    $t_file_path = dirname( config_get( 'plugins_releasemgt_disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT ) . DIRECTORY_SEPARATOR . '.' ) . DIRECTORY_SEPARATOR;
     
     $c_file_path = db_prepare_string( $t_file_path );
     $c_new_file_name = db_prepare_string( $p_file_name );

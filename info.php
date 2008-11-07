@@ -5,14 +5,14 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-02-04
+ * Last update: 2008-11-08
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
- * @author Vincent DEBOUT <deboutv@free.fr>
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  */
 
-define( 'PLUGINS_RELEASEMGT_VERSION', '0.0.2' );
+define( 'PLUGINS_RELEASEMGT_VERSION', '0.0.3' );
 
 function releasemgt_get_info() {
     $t_main_menu = config_get( 'main_menu_custom_options' );

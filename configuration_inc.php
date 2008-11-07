@@ -5,14 +5,14 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-02-04
+ * Last update: 2008-11-08
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
- * @author Vincent DEBOUT <deboutv@free.fr>
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  */
 
-if ( !ereg( 'plugins_page.php', $_SERVER['PHP_SELF'] ) ) {
+if ( !defined( 'PLUGINS_PM_OK' ) ) {
     header( 'Location: ../../plugins_page.php' );
     exit();
 }
@@ -30,10 +30,12 @@ if ( $t_action == 'update' ) {
     $t_ftp_server = gpc_get_string( 'ftp_server', PLUGINS_RELEASEMGT_FTP_SERVER_DEFAULT );
     $t_ftp_user = gpc_get_string( 'ftp_user', PLUGINS_RELEASEMGT_FTP_USER_DEFAULT );
     $t_ftp_pass = gpc_get_string( 'ftp_pass', PLUGINS_RELEASEMGT_FTP_PASS_DEFAULT );
+    $t_file_number = gpc_get_int( 'file_number', PLUGINS_RELEASEMGT_FILE_NUMBER_DEFAULT );
     $t_notification_enable = gpc_get_bool( 'notification_enable' );
     $t_notify_handler = gpc_get_bool( 'notify_handler' );
     $t_notify_reporter = gpc_get_bool( 'notify_reporter' );
     $t_notify_email = gpc_get_string( 'notify_email', PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT );
+    $t_email_subject = gpc_get_string( 'email_subject' );
     $t_email_template = gpc_get_string( 'email_template', PLUGINS_RELEASEMGT_EMAIL_TEMPLATE_DEFAULT );
     config_set( 'plugins_releasemgt_upload_threshold_level', $t_upload_access_level, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_upload_method', $t_upload_method, NO_USER, $t_project_id );
@@ -41,12 +43,47 @@ if ( $t_action == 'update' ) {
     config_set( 'plugins_releasemgt_ftp_server', $t_ftp_server, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_ftp_user', $t_ftp_user, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_ftp_pass', $t_ftp_pass, NO_USER, $t_project_id );
+    config_set( 'plugins_releasemgt_file_number', $t_file_number, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_notification_enable', $t_notification_enable, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_notify_handler', $t_notify_handler, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_notify_reporter', $t_notify_reporter, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_notify_email', $t_notify_email, NO_USER, $t_project_id );
+    config_set( 'plugins_releasemgt_email_subject', $t_email_subject, NO_USER, $t_project_id );
     config_set( 'plugins_releasemgt_email_template', $t_email_template, NO_USER, $t_project_id );
-    header( 'Location: plugins_page.php?plugin=releasemgt' );
+    html_page_top1();
+    $t_redirect = 'plugins_page.php?plugin=releasemgt';
+    html_meta_redirect( $t_redirect );
+    html_page_top2();
+    echo '<br /><div align="center">';
+    echo lang_get( 'operation_successful' ) . '<br />';
+    print_bracket_link( $t_redirect, lang_get( 'proceed' ) );
+    echo '</div>';
+    html_page_bottom1( __FILE__ );
+    exit();
+}
+if ( $t_action == 'delete' && $t_project_id != ALL_PROJECTS ) {
+    config_delete( 'plugins_releasemgt_upload_threshold_level', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_upload_method', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_disk_dir', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_ftp_server', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_ftp_user', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_ftp_pass', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_file_number', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_notification_enable', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_notify_handler', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_notify_reporter', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_notify_email', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_email_subject', NO_USER, $t_project_id );
+    config_delete( 'plugins_releasemgt_email_template', NO_USER, $t_project_id );
+    html_page_top1();
+    $t_redirect = 'plugins_page.php?plugin=releasemgt';
+    html_meta_redirect( $t_redirect );
+    html_page_top2();
+    echo '<br /><div align="center">';
+    echo lang_get( 'operation_successful' ) . '<br />';
+    print_bracket_link( $t_redirect, lang_get( 'proceed' ) );
+    echo '</div>';
+    html_page_bottom1( __FILE__ );
     exit();
 }
 
@@ -84,6 +121,16 @@ html_page_top2();
       <!-- spacer -->
       <tr>
         <td class="spacer" colspan="2">&nbsp;</td>
+      </tr>
+
+      <!-- file number -->
+      <tr <?php echo helper_alternate_class() ?>>
+        <td class="category" width="30%">
+          <span class="required">*</span><?php echo lang_get( 'plugins_releasemgt_file_count' ); ?>
+        </td>
+        <td width="70%">
+          <input type="text" name="file_number" value="<?php echo config_get( 'plugins_releasemgt_file_number', PLUGINS_RELEASEMGT_FILE_NUMBER_DEFAULT ); ?>" size="3" maxlength="1" />
+        </td>
       </tr>
 
       <!-- Upload method -->
@@ -200,6 +247,16 @@ html_page_top2();
         <td class="spacer" colspan="2">&nbsp;</td>
       </tr>
 
+      <!-- Email subject -->
+      <tr <?php echo helper_alternate_class() ?>>
+        <td class="category" width="30%">
+          <span class="required">*</span><?php echo lang_get( 'plugins_releasemgt_email_subject' ); ?> <?php plugins_helplink_print_link( 'plugins_releasemgt_email_subject_help' ) ?>
+        </td>
+        <td width="70%">
+          <input type="text" name="email_subject" size="30" value="<?php echo config_get( 'plugins_releasemgt_email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT ); ?>" />
+        </td>
+      </tr>
+
       <!-- Email template -->
       <tr <?php echo helper_alternate_class() ?>>
         <td class="category" width="30%">
@@ -241,6 +298,7 @@ foreach( $t_dirs as $t_dir ) {
         </td>
         <td class="center">
           <input tabindex="4" type="submit" class="button" value="<?php echo lang_get( 'submit_button' ) ?>" />
+          <?php if ( $t_project_id != ALL_PROJECTS ) { ?><input type="button" class="button" value="<?php echo lang_get( 'revert_to_all_project' ) ?>" onclick="document.forms.plugins_releasemgt.action.value='delete';document.forms.plugins_releasemgt.submit();" /><?php } ?>
         </td>
       </tr>
 

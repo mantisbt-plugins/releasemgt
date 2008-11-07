@@ -20,6 +20,7 @@ $s_plugins_releasemgt_download_link = 'Download';
 
 $s_plugins_releasemgt_display_page_title = 'Download';
 $s_plugins_releasemgt_upload_title = 'Upload a file';
+$s_plugins_releasemgt_file_count = 'Number of file to upload';
 
 /* Configuration page */
 
@@ -39,9 +40,10 @@ $s_plugins_releasemgt_notify_handler = 'Notify handler';
 $s_plugins_releasemgt_notify_reporter = 'Notify reporter';
 $s_plugins_releasemgt_notify_email = 'Emails (separated by \',\')';
 $s_plugins_releasemgt_email_template = 'Email template';
+$s_plugins_releasemgt_email_subject = 'Email subject';
 
-/* Email */
+/* Help link */
 
-$s_plugins_releasemgt_email_subject = 'A new file is available to download';
+$s_plugins_releasemgt_email_subject_help = 'You can specify the subject of the email. To do that you can use the following shortcut:<ul><li><b>**</b>: *</li><li><b>*c</b>: Number of file added</li><li><b>*p</b>: The project name</li><li><b>*v</b>: The project version.</li></ul>';
 
 ?>

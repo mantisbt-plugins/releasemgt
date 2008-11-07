@@ -5,14 +5,14 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-02-04
+ * Last update: 2008-11-08
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
- * @author Vincent DEBOUT <deboutv@free.fr>
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  */
 
-if ( !ereg( 'plugins_page.php', $_SERVER['PHP_SELF'] ) ) {
+if ( !defined( 'PLUGINS_PM_OK' ) ) {
     header( 'Location: ../../plugins_page.php' );
     exit();
 }
@@ -63,14 +63,22 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
   <table class="width100" cellspacing="1">
     <tr class="row-1">
       <td class="category" width="15%">
+        <span class="required">*</span><?php echo lang_get( 'plugins_releasemgt_file_count' ) ?>
+      </td>
+      <td width="85%">
+	<input name="file_count" id="file_count" type="text" size="3" maxlength="1" value="<?php echo config_get( 'plugins_releasemgt_file_number', PLUGINS_RELEASEMGT_FILE_NUMBER_DEFAULT ); ?>" onchange="javascript:UpdateFileField();" />
+      </td>
+    </tr>
+    <tr class="row-2">
+      <td class="category" width="15%">
         <span class="required">*</span><?php echo lang_get( 'select_file' ) ?><br />
         <?php echo '<span class="small">(' . lang_get( 'max_file_size' ) . ': ' . number_format( $t_max_file_size/1000 ) . 'k)</span>'?>
       </td>
       <td width="85%">
-	<input name="file" type="file" size="40" />
+        <div id="FileField"></div>
       </td>
     </tr>
-    <tr class="row-2">
+    <tr class="row-1">
       <td class="category" width="15%">
         <?php echo lang_get( 'product_version' ) ?>
       </td>
@@ -82,7 +90,7 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
         </select>
       </td>
     </tr>
-    <tr class="row-1">
+    <tr class="row-2">
       <td class="category" width="15%">
         <?php echo lang_get( 'description' ) ?>
       </td>
@@ -99,6 +107,26 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
       </td>
     </tr>
   </table>
+  <script type="text/javascript" language="javascript">
+    <!--
+      
+      function UpdateFileField() {
+          var file_count = document.getElementById( 'file_count').value;
+          var inner = '';
+
+          for( var i=0; i<file_count; i++ ) {
+              if ( inner != '' ) {
+                  inner += '<br />';
+              }
+              inner += '<input name="file_' + i + '" type="file" size="40" />';
+          }
+          document.getElementById( 'FileField' ).innerHTML = inner;
+      }
+
+    UpdateFileField();
+            
+    -->
+  </script>
 </form>
 <?php 
 

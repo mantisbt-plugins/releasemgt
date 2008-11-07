@@ -5,14 +5,14 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-01-07
+ * Last update: 2008-11-08
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
- * @author Vincent DEBOUT <deboutv@free.fr>
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  */
 
-if ( !ereg( 'plugins_page.php', $_SERVER['PHP_SELF'] ) ) {
+if ( !defined( 'PLUGINS_PM_OK' ) ) {
     header( 'Location: ../../plugins_page.php' );
     exit();
 }

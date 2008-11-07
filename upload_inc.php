@@ -5,19 +5,23 @@
  *
  *
  * Created: 2008-01-05
- * Last update: 2008-02-04
+ * Last update: 2008-11-08
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright 
- * @author Vincent DEBOUT <deboutv@free.fr>
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  */
 
-if ( !ereg( 'plugins_page.php', $_SERVER['PHP_SELF'] ) ) {
+if ( !defined( 'PLUGINS_PM_OK' ) ) {
     header( 'Location: ../../plugins_page.php' );
     exit();
 }
 
-$t_file = gpc_get_file( 'file' );
+$t_file_count = gpc_get_int( 'file_count' );
+$t_file = array();
+for( $i=0; $i<$t_file_count; $i++ ) {
+    $t_file[$i] = gpc_get_file( 'file_' . $i );
+}
 $t_version = gpc_get_int( 'release', 0 );
 $t_description = gpc_get_string( 'description', '' );
 
@@ -28,31 +32,46 @@ if ( user_get_access_level( $t_current_user_id ) < config_get( 'plugins_releasem
     access_denied();
 }
 
-$t_file_error = ( isset( $t_file['error'] ) ) ? $t_file['error'] : 0;
-$t_file_id = plugins_releasemgt_file_add( $t_file['tmp_name'], $t_file['name'], $t_file['type'], $t_project_id, $t_version, $t_description, $t_file_error );
+for( $i=0; $i<$t_file_count; $i++ ) {
+    $t_file_error[$i] = ( isset( $t_file[$i]['error'] ) ) ? $t_file[$i]['error'] : 0;
+    $t_file_id[$i] = plugins_releasemgt_file_add( $t_file[$i]['tmp_name'], $t_file[$i]['name'], $t_file[$i]['type'], $t_project_id, $t_version, $t_description, $t_file_error[$i] );
+}
 
 $t_redirect_url = 'plugins_page.php?plugin=releasemgt&display=releasemgt';
 
 if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_ENABLE_DEFAULT ) == ON ) {
-    $t_subject = lang_get( 'plugins_releasemgt_email_subject' );
+    $t_subject = config_get( 'plugins_releasemgt_email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT );
+    $t_subject_replace = array( '*P' => '*p', '*C' => '*c', '*V' => '*v', '*p' => project_get_name( $t_project_id ), '*v' => version_get_field( $t_version, 'version' ), '*c' => $t_file_count, '**' => '*' );
+    foreach( $t_subject_replace as $t_key => $t_value ) {
+        $t_subject = str_replace( $t_key, $t_value, $t_subject );
+    }
     $t_template_dir = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . config_get( 'plugins_releasemgt_email_template', PLUGINS_RELEASEMGT_EMAIL_TEMPLATE_DEFAULT ) . DIRECTORY_SEPARATOR;
 
     $t_template = array();
-    $t_template['file_name'] = $t_file['name'];
-    $t_template['file_description'] = $t_description;
-    $t_template['file_html_description'] = string_display_links( $t_description );
-    $t_template['file_url'] = config_get( 'path' ) . 'plugins_page.php?plugin=releasemgt&display=download&id=' . $t_file_id;
+    $t_template['files'] = array();
+    $t_template['files_count'] = $t_file_count;
+    for( $i=0; $i<$t_file_count; $i++ ) {
+        $t_template['files'][$i] = array();
+        $t_template['files'][$i]['file_name'] = $t_file[$i]['name'];
+        $t_template['files'][$i]['file_description'] = $t_description;
+        $t_template['files'][$i]['file_html_description'] = string_display_links( $t_description );
+        $t_template['files'][$i]['file_url'] = config_get( 'path' ) . 'plugins_page.php?plugin=releasemgt&display=download&id=' . $t_file_id[$i];
+        $t_template['files'][$i]['file_size'] = number_format( $t_file[$i]['size'] );
+        $t_template['files'][$i]['file_date'] = date( config_get( 'normal_date_format' ), db_unixtimestamp( plugins_releasemgt_file_get_field( $t_file_id[$i], 'date_added' ) ) );
+    }
     $t_template['project_id'] = $t_project_id;
     $t_template['project_name'] = project_get_name( $t_project_id );
     $t_template['version_id'] = $t_version;
     if ( $t_version != 0 ) {
-        $t_template['version_name'] = version_get_field( $t_version, 'name' );
+        $t_template['version_name'] = version_get_field( $t_version, 'version' );
         $t_template['version_description'] = version_get_field( $t_version, 'description' );
         $t_template['version_date_order'] = version_get_field( $t_version, 'date_order' );
+        $t_template['version_date'] = date( config_get( 'normal_date_format' ), $t_template['version_date_order'] );
     } else {
         $t_template['version_name'] = '';
         $t_template['version_description'] = '';
         $t_template['version_date_order'] = '';
+        $t_template['version_date'] = '';
     }
     $t_template['user_id'] = $t_current_user_id;
     $t_template['user_name'] = user_get_name( $t_current_user_id );
