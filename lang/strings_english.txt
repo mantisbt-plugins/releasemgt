@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ReleaseMgt plugin.
  *
@@ -13,37 +12,41 @@
 
 /* Link string */
 
-$s_plugins_releasemgt_link = 'Download';
-$s_plugins_releasemgt_download_link = 'Download';
+$s_plugin_Releasemgt_link = 'Download';
+$s_plugin_Releasemgt_download_link = 'Download';
+$s_plugin_Releasemgt_releases_link = 'Releases';
+
 
 /* Display page */
 
-$s_plugins_releasemgt_display_page_title = 'Download';
-$s_plugins_releasemgt_upload_title = 'Upload a file';
-$s_plugins_releasemgt_file_count = 'Number of file to upload';
+$s_plugin_Releasemgt_display_page_title = 'Download';
+$s_plugin_Releasemgt_upload_title = 'Upload a file';
+$s_plugin_Releasemgt_file_count = 'Number of file to upload';
 
 /* Configuration page */
 
-$s_plugins_releasemgt_configuration_page_title = 'ReleaseMgt Plugin Configuration';
-$s_plugins_releasemgt_configuration_for_project = 'Configuration for %%project%% project.';
-$s_plugins_releasemgt_upload_access_level = 'Upload access level';
-$s_plugins_releasemgt_upload_method = 'Upload method';
-$s_plugins_releasemgt_method_disk = 'Disk';
-$s_plugins_releasemgt_method_database = 'Database';
-$s_plugins_releasemgt_method_ftp = 'FTP';
-$s_plugins_releasemgt_disk_path = 'Disk directory (only if upload method is Disk)';
-$s_plugins_releasemgt_ftp_server = 'FTP Server (only if upload method is FTP)';
-$s_plugins_releasemgt_ftp_user = 'FTP User (only if upload method is FTP)';
-$s_plugins_releasemgt_ftp_pass = 'FTP Password (only if upload method is FTP)';
-$s_plugins_releasemgt_notification_enable = 'Enable email notification';
-$s_plugins_releasemgt_notify_handler = 'Notify handler';
-$s_plugins_releasemgt_notify_reporter = 'Notify reporter';
-$s_plugins_releasemgt_notify_email = 'Emails (separated by \',\')';
-$s_plugins_releasemgt_email_template = 'Email template';
-$s_plugins_releasemgt_email_subject = 'Email subject';
+$s_plugin_Releasemgt_configuration_page_title = 'ReleaseMgt Plugin Configuration';
+$s_plugin_Releasemgt_configuration_for_project = 'Configuration for %%project%% project.';
+$s_plugin_Releasemgt_upload_access_level = 'Upload access level';
+$s_plugin_Releasemgt_upload_method = 'Upload method';
+$s_plugin_Releasemgt_method_disk = 'Disk';
+$s_plugin_Releasemgt_method_database = 'Database';
+$s_plugin_Releasemgt_method_ftp = 'FTP';
+$s_plugin_Releasemgt_disk_path = 'Disk directory (only if upload method is Disk)';
+$s_plugin_Releasemgt_ftp_server = 'FTP Server (only if upload method is FTP)';
+$s_plugin_Releasemgt_ftp_user = 'FTP User (only if upload method is FTP)';
+$s_plugin_Releasemgt_ftp_pass = 'FTP Password (only if upload method is FTP)';
+$s_plugin_Releasemgt_notification_enable = 'Enable email notification';
+$s_plugin_Releasemgt_notify_handler = 'Notify handler';
+$s_plugin_Releasemgt_notify_reporter = 'Notify reporter';
+$s_plugin_Releasemgt_notify_email = 'Emails (separated by \',\')';
+$s_plugin_Releasemgt_email_template = 'Email template';
+$s_plugin_Releasemgt_email_subject = 'Email subject';
+$s_plugin_Releasemgt_download_requires_login = 'Require login for download';
 
 /* Help link */
 
-$s_plugins_releasemgt_email_subject_help = 'You can specify the subject of the email. To do that you can use the following shortcut:<ul><li><b>**</b>: *</li><li><b>*c</b>: Number of file added</li><li><b>*p</b>: The project name</li><li><b>*v</b>: The project version.</li></ul>';
+$s_plugin_Releasemgt_email_subject_help = 'You can specify the subject of the email. To do that you can use the following shortcut:<ul><li><b>**</b>: *</li><li><b>*c</b>: Number of file added</li><li><b>*p</b>: The project name</li><li><b>*v</b>: The project version.</li></ul>';
 
-?>
+/* Error messages */
+$MANTIS_ERROR[ERROR_FILE_NOT_FOUND] = 'File not found.';

@@ -3,49 +3,52 @@
 /**
  * ReleaseMgt plugin
  *
+ * Original author Vincent DEBOUT
+ * modified for new Mantis plugin system by Jiri Hron
  *
  * Created: 2008-01-05
- * Last update: 2008-11-08
+ * Last update: 2012-05-23
  *
  * @link http://deboutv.free.fr/mantis/
- * @copyright 
+ * @copyright
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
+ * @author Jiri Hron <jirka.hron@gmail.com>
  */
 
-if ( !defined( 'PLUGINS_PM_OK' ) ) {
-    header( 'Location: ../../plugins_page.php' );
-    exit();
-}
+require_once( 'core.php' );
+require_once( 'bug_api.php' );
+require_once( 'releasemgt_api.php' );
 
 $t_file_count = gpc_get_int( 'file_count' );
 $t_file = array();
+$t_description = array();
 for( $i=0; $i<$t_file_count; $i++ ) {
     $t_file[$i] = gpc_get_file( 'file_' . $i );
+    $t_description[$i] = gpc_get_string( 'description_' . $i, '' );
 }
 $t_version = gpc_get_int( 'release', 0 );
-$t_description = gpc_get_string( 'description', '' );
 
 $t_current_user_id = auth_get_current_user_id();
 $t_project_id = helper_get_current_project();
 
-if ( user_get_access_level( $t_current_user_id ) < config_get( 'plugins_releasemgt_upload_threshold_level', PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT ) ) {
+if ( user_get_access_level( $t_current_user_id ) < plugin_config_get( 'upload_threshold_level', PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT ) ) {
     access_denied();
 }
 
 for( $i=0; $i<$t_file_count; $i++ ) {
     $t_file_error[$i] = ( isset( $t_file[$i]['error'] ) ) ? $t_file[$i]['error'] : 0;
-    $t_file_id[$i] = plugins_releasemgt_file_add( $t_file[$i]['tmp_name'], $t_file[$i]['name'], $t_file[$i]['type'], $t_project_id, $t_version, $t_description, $t_file_error[$i] );
+    $t_file_id[$i] = plugins_releasemgt_file_add( $t_file[$i]['tmp_name'], $t_file[$i]['name'], $t_file[$i]['type'], $t_project_id, $t_version, $t_description[$i], $t_file_error[$i] );
 }
 
-$t_redirect_url = 'plugins_page.php?plugin=releasemgt&display=releasemgt';
-
-if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_ENABLE_DEFAULT ) == ON ) {
-    $t_subject = config_get( 'plugins_releasemgt_email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT );
+$t_redirect_url = plugin_page( 'releases', true );
+if ( plugin_config_get( 'notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_ENABLE_DEFAULT ) == ON ) {
+    $t_subject = plugin_config_get( 'email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT );
     $t_subject_replace = array( '*P' => '*p', '*C' => '*c', '*V' => '*v', '*p' => project_get_name( $t_project_id ), '*v' => version_get_field( $t_version, 'version' ), '*c' => $t_file_count, '**' => '*' );
     foreach( $t_subject_replace as $t_key => $t_value ) {
         $t_subject = str_replace( $t_key, $t_value, $t_subject );
     }
-    $t_template_dir = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . config_get( 'plugins_releasemgt_email_template', PLUGINS_RELEASEMGT_EMAIL_TEMPLATE_DEFAULT ) . DIRECTORY_SEPARATOR;
+    $t_selected = plugin_config_get( 'email_template', PLUGINS_RELEASEMGT_EMAIL_TEMPLATE_DEFAULT );
+    $t_template_dir = config_get_global('plugin_path' ). plugin_get_current() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $t_selected . DIRECTORY_SEPARATOR;
 
     $t_template = array();
     $t_template['files'] = array();
@@ -55,9 +58,9 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
         $t_template['files'][$i]['file_name'] = $t_file[$i]['name'];
         $t_template['files'][$i]['file_description'] = $t_description;
         $t_template['files'][$i]['file_html_description'] = string_display_links( $t_description );
-        $t_template['files'][$i]['file_url'] = config_get( 'path' ) . 'plugins_page.php?plugin=releasemgt&display=download&id=' . $t_file_id[$i];
+        $t_template['files'][$i]['file_url'] = config_get( 'path' ) . plugin_page( 'download' , true) . '&id=' . $t_file_id[$i];
         $t_template['files'][$i]['file_size'] = number_format( $t_file[$i]['size'] );
-        $t_template['files'][$i]['file_date'] = date( config_get( 'normal_date_format' ), db_unixtimestamp( plugins_releasemgt_file_get_field( $t_file_id[$i], 'date_added' ) ) );
+        $t_template['files'][$i]['file_date'] = date( config_get( 'normal_date_format' ), plugins_releasemgt_file_get_field( $t_file_id[$i], 'date_added'  ) );
     }
     $t_template['project_id'] = $t_project_id;
     $t_template['project_name'] = project_get_name( $t_project_id );
@@ -96,20 +99,20 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
     }
     $t_html_message = ob_get_contents();
     ob_end_clean();
-    
+
     $t_id_list = array();
-    if ( config_get( 'plugins_releasemgt_notify_handler', PLUGINS_RELEASEMGT_NOTIFY_HANDLER_DEFAULT ) == ON ) {
+    if ( plugin_config_get( 'notify_handler', PLUGINS_RELEASEMGT_NOTIFY_HANDLER_DEFAULT ) == ON ) {
         $t_user_list = project_get_all_user_rows( $t_project_id, config_get( 'handle_bug_threshold' ) );
         foreach( $t_user_list as $t_user ) {
             $t_id_list[] = $t_user['id'];
         }
     }
     // Get reporter
-    if ( config_get( 'plugins_releasemgt_notify_reporter', PLUGINS_RELEASEMGT_NOTIFY_REPORTER_DEFAULT ) == ON ) {
+    if ( plugin_config_get( 'notify_reporter', PLUGINS_RELEASEMGT_NOTIFY_REPORTER_DEFAULT ) == ON ) {
         if ( $t_version == 0 ) {
-            $t_query = 'SELECT reporter_id FROM ' . config_get( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'\'';
+            $t_query = 'SELECT reporter_id FROM ' . db_get_table( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'\'';
         } else {
-            $t_query = 'SELECT reporter_id FROM ' . config_get( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'' . db_prepare_string( version_get_field( $t_version, 'version' ) ) . '\'';
+            $t_query = 'SELECT reporter_id FROM ' . db_get_table( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'' . db_prepare_string( version_get_field( $t_version, 'version' ) ) . '\'';
         }
         $t_result = db_query( $t_query );
         while( $t_row = db_fetch_array( $t_result ) ) {
@@ -121,7 +124,7 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
     }
 
     // Add users
-    $t_emails = explode( ',', config_get( 'plugins_releasemgt_notify_email', PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT ) );
+    $t_emails = explode( ',', plugin_config_get( 'notify_email', PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT ) );
     foreach( $t_emails as $t_email ) {
         if ( trim( $t_email ) != '' ) {
             $t_id_list[] = trim( $t_email );
@@ -147,13 +150,13 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
             $t_email_data->metadata = array();
             $t_email_data->metadata['headers'] = array( 'X-Mantis' => 'ReleaseMgt' );
             $t_email_data->metadata['priority'] = config_get( 'mail_priority' );
-            $t_email_data->metadata['charset'] = lang_get( 'charset', lang_get_current() );
+            $t_email_data->metadata['charset'] = 'utf-8';
             $t_email_data->metadata['plugins_htmlmail_html_message'] = base64_encode( $t_html_message );
             email_queue_add( $t_email_data );
         }
         if ( OFF == config_get( 'email_send_using_cronjob' ) ) {
             email_send_all();
-        }        
+        }
     } else {
         foreach( $t_email_ids as $t_email ) {
             email_send( $t_email, $t_subject, $t_message );
@@ -161,20 +164,4 @@ if ( config_get( 'plugins_releasemgt_notification_enable', PLUGINS_RELEASEMGT_NO
     }
 }
 
-html_page_top1();
-html_meta_redirect( $t_redirect_url );
-html_page_top2();
-
-?>
-<br />
-<div align="center">
-<?php
-echo lang_get( 'operation_successful' ) . '<br />';
-print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
-?>
-</div>
-<?php
-
-html_page_bottom1( __FILE__ );
-
-?>
+release_mgt_successful_redirect($t_redirect_url);

@@ -3,32 +3,39 @@
 /**
  * ReleaseMgt plugin
  *
+ * Original author Vincent DEBOUT
+ * modified for new Mantis plugin system by Jiri Hron
  *
  * Created: 2008-01-05
- * Last update: 2008-11-08
+ * Last update: 2012-05-23
  *
  * @link http://deboutv.free.fr/mantis/
- * @copyright 
+ * @copyright
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
+ * @author Jiri Hron <jirka.hron@gmail.com>
  */
 
 require_once( $t_core_path . 'file_api.php' );
 
+/**
+ *
+ * @todo Not yet converted to the new plugin system
+ */
 function plugins_releasemgt_file_ftp_connect() {
     $conn_id = ftp_connect( config_get( 'plugins_releasemgt_ftp_server', PLUGINS_RELEASEMGT_FTP_SERVER_DEFAULT ) );
     $login_result = ftp_login( $conn_id, config_get( 'plugins_releasemgt_ftp_user', PLUGINS_RELEASEMGT_FTP_USER_DEFAULT ), config_get( 'plugins_releasemgt_ftp_pass', PLUGINS_RELEASEMGT_FTP_USER_DEFAULT ) );
-    
+
     if ( ( !$conn_id ) || ( !$login_result ) ) {
         trigger_error( ERROR_FTP_CONNECT_ERROR, ERROR );
     }
-    
+
     return $conn_id;
 }
 
 function plugins_releasemgt_file_get_field( $p_file_id, $p_field_name ) {
     $c_file_id 	= db_prepare_int( $p_file_id );
     $c_field_name = db_prepare_string( $p_field_name );
-    $t_file_table = config_get( 'db_table_prefix' ) . '_plugins_releasemgt_file' . config_get( 'db_table_suffix' );
+    $t_file_table = plugin_table('file');
 
     $query = "SELECT $c_field_name
 				  FROM $t_file_table
@@ -39,7 +46,7 @@ function plugins_releasemgt_file_get_field( $p_file_id, $p_field_name ) {
 }
 
 function plugins_releasemgt_file_delete( $p_file_id ) {
-    $t_upload_method = config_get( 'plugins_releasemgt_upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT );
+    $t_upload_method = plugin_config_get( 'upload_method', UPLOAD_METHOD_DEFAULT );
 
     $c_file_id = db_prepare_int( $p_file_id );
     $t_filename = plugins_releasemgt_file_get_field( $p_file_id, 'filename' );
@@ -57,7 +64,7 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
         }
     }
 
-    $t_file_table = config_get( 'db_table_prefix' ) . '_plugins_releasemgt_file' . config_get( 'db_table_suffix' );
+    $t_file_table = plugin_table ( 'file' );
     $query = "DELETE FROM $t_file_table
 				WHERE id='$c_file_id'";
     db_query( $query );
@@ -68,12 +75,12 @@ function plugins_releasemgt_file_generate_unique_name( $p_seed, $p_filepath ) {
     do {
         $t_string = file_generate_name( $p_seed );
     } while ( !plugins_releasemgt_diskfile_is_name_unique( $t_string , $p_filepath ) );
-    
+
     return $t_string;
 }
 
 function plugins_releasemgt_diskfile_is_name_unique( $p_name, $p_filepath ) {
-    $t_file_table = config_get( 'db_table_prefix' ) . '_plugins_releasemgt_file' . config_get( 'db_table_suffix' );
+    $t_file_table = plugin_table ( 'file' );
 
     $c_name = db_prepare_string( $p_filepath . $p_name );
 
@@ -91,12 +98,12 @@ function plugins_releasemgt_diskfile_is_name_unique( $p_name, $p_filepath ) {
 }
 
 function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_version_id ) {
-    $t_file_table = config_get( 'db_table_prefix' ) . '_plugins_releasemgt_file' . config_get( 'db_table_suffix' );
-                
+    $t_file_table = plugin_table( 'file' );
+
     $c_name = db_prepare_string( $p_name );
     $c_project_id = db_prepare_int( $p_project_id );
     $c_version_id = db_prepare_int( $p_version_id );
-    
+
     $query = "SELECT COUNT(*)
 				  FROM $t_file_table
 				  WHERE filename='$c_name' AND project_id=$c_project_id AND version_id=$c_version_id";
@@ -143,8 +150,8 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
     $c_title = db_prepare_string( $p_file_name );
     $c_desc = db_prepare_string( $p_description );
 
-    $t_file_path = dirname( config_get( 'plugins_releasemgt_disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT ) . DIRECTORY_SEPARATOR . '.' ) . DIRECTORY_SEPARATOR;
-    
+    $t_file_path = dirname( plugin_config_get( 'disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT ) . DIRECTORY_SEPARATOR . '.' ) . DIRECTORY_SEPARATOR;
+
     $c_file_path = db_prepare_string( $t_file_path );
     $c_new_file_name = db_prepare_string( $p_file_name );
 
@@ -162,7 +169,7 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
     }
     $c_file_size = db_prepare_int( $t_file_size );
 
-    $t_method = config_get( 'plugins_releasemgt_upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT );
+    $t_method = plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT );
 
     switch ( $t_method ) {
       case FTP:
@@ -175,7 +182,7 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
                 file_ftp_put( $conn_id, $t_disk_file_name, $p_tmp_file );
                 file_ftp_disconnect( $conn_id );
             }
-            
+
             if ( !move_uploaded_file( $p_tmp_file, $t_disk_file_name ) ) {
                 trigger_error( FILE_MOVE_FAILED, ERROR );
             }
@@ -194,14 +201,27 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
         trigger_error( ERROR_GENERIC, ERROR );
     }
 
-    $t_file_table = config_get( 'db_table_prefix' ) . '_plugins_releasemgt_file' . config_get( 'db_table_suffix' );
+    $t_file_table = plugin_table ( 'file' );
     $query = "INSERT INTO $t_file_table
 						(project_id, version_id, title, description, diskfile, filename, folder, filesize, file_type, date_added, content)
 					  VALUES
-						($c_project_id, $c_version_id, '$c_title', '$c_desc', '$c_disk_file_name', '$c_new_file_name', '$c_file_path', $c_file_size, '$c_file_type', " . db_now() .", '$c_content')";
+						($c_project_id, $c_version_id, '$c_title', '$c_desc', '$c_disk_file_name', '$c_new_file_name', '$c_file_path', $c_file_size, '$c_file_type', '" . date("Y-m-d H:i:s") ."', '$c_content')";
     db_query( $query );
     $t_file_id = db_insert_id();
     return $t_file_id;
+}
+
+/**
+ * Retaken function form print_api.php but it prints redirection message everytime
+ * @param type $p_redirect_to
+ */
+function release_mgt_successful_redirect( $p_redirect_to ) {
+    html_page_top( null, $p_redirect_to );
+    echo '<br /><div class="center">';
+    echo lang_get( 'operation_successful' ) . '<br />';
+    print_bracket_link( $p_redirect_to, lang_get( 'proceed' ) );
+    echo '</div>';
+    html_page_bottom();
 }
 
 ?>

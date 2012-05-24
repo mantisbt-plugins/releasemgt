@@ -3,13 +3,16 @@
 /**
  * ReleaseMgt plugin
  *
+ * Original author Vincent DEBOUT
+ * modified for new Mantis plugin system by Jiri Hron
  *
  * Created: 2008-01-05
- * Last update: 2008-11-08
+ * Last update: 2012-05-23
  *
  * @link http://deboutv.free.fr/mantis/
- * @copyright 
+ * @copyright
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
+ * @author Jiri Hron <jirka.hron@gmail.com>
  */
 
 ?>
