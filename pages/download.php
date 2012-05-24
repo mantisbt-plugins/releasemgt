@@ -43,27 +43,57 @@ if ($require_login){
     auth_get_current_user_id();
 }
 
-@ob_end_clean();
+# throw away output buffer contents (and disable it) to protect download
+while ( @ob_end_clean() );
+
+if ( ini_get( 'zlib.output_compression' ) && function_exists( 'ini_set' ) ) {
+        ini_set( 'zlib.output_compression', false );
+}
+
+http_security_headers();
+
+# Make sure that IE can download the attachments under https.
 header( 'Pragma: public' );
 
-header( 'Content-Type: ' . $v_file_type );
-header( 'Content-Length: ' . $v_filesize );
-$t_filename = file_get_display_name( $v_filename );
-$t_disposition = ' attachment;';
-
-header( 'Content-Disposition:' . $t_disposition . ' filename="' . $t_filename . '"' );
-header( 'Content-Description: Download Data' );
-header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s \G\M\T', $v_date_added ) );
-
+# To fix an IE bug which causes problems when downloading
+# attached files via HTTPS, we disable the "Pragma: no-cache"
+# command when IE is used over HTTPS.
 global $g_allow_file_cache;
-if ( ( isset( $_SERVER["HTTPS"] ) && ( "on" == strtolower( $_SERVER["HTTPS"] ) ) ) && preg_match( "/MSIE/", $_SERVER["HTTP_USER_AGENT"] ) ) {
-# Suppress "Pragma: no-cache" header.
+if ( ( isset( $_SERVER["HTTPS"] ) && ( "on" == utf8_strtolower( $_SERVER["HTTPS"] ) ) ) && is_browser_internet_explorer() ) {
+        # Suppress "Pragma: no-cache" header.
 } else {
-    if ( ! isset( $g_allow_file_cache ) ) {
-        header( 'Pragma: no-cache' );
-    }
+        if ( !isset( $g_allow_file_cache ) ) {
+            header( 'Pragma: no-cache' );
+        }
 }
 header( 'Expires: ' . gmdate( 'D, d M Y H:i:s \G\M\T', time() ) );
+
+header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s \G\M\T', $v_date_added ) );
+
+$t_filename = file_get_display_name( $v_filename );
+# For Internet Explorer 8 as per http://blogs.msdn.com/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx
+# Don't let IE second guess our content-type!
+header( 'X-Content-Type-Options: nosniff' );
+
+//Would be better to use integrated function but it brakes filename of file
+//http_content_disposition_header( $t_filename);
+$t_disposition = 'attachment;';
+if ( is_browser_internet_explorer() || is_browser_chrome() ) {
+        // Internet Explorer does not support RFC2231 however it does
+        // incorrectly decode URL encoded filenames and we can use this to
+        // get UTF8 filenames to work with the file download dialog. Chrome
+        // behaves in the same was as Internet Explorer in this respect.
+        // See http://greenbytes.de/tech/tc2231/#attwithfnrawpctenclong
+        header( 'Content-Disposition:' . $t_disposition . ' filename="' . $t_filename . '"' );
+} else {
+        // For most other browsers, we can use this technique:
+        // http://greenbytes.de/tech/tc2231/#attfnboth2
+        header( 'Content-Disposition:' . $t_disposition . ' filename*=UTF-8\'\'' . $t_filename . '; filename="' . $t_filename . '"' );
+}
+
+header( 'Content-Length: ' . $v_filesize );
+
+header( 'Content-Type: ' . $v_file_type );
 
 switch ( plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT ) ) {
   case DISK:
