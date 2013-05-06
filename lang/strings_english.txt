@@ -21,7 +21,7 @@ $s_plugin_Releasemgt_releases_link = 'Releases';
 
 $s_plugin_Releasemgt_display_page_title = 'Download';
 $s_plugin_Releasemgt_upload_title = 'Upload a file';
-$s_plugin_Releasemgt_file_count = 'Number of file to upload';
+$s_plugin_Releasemgt_file_count = 'Number of files to upload';
 
 /* Configuration page */
 

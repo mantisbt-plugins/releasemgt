@@ -6,12 +6,13 @@
  * modified for new Mantis plugin system by Jiri Hron
  *
  * Created: 2008-01-05
- * Last update: 2012-05-23
+ * Last update: 2013-05-03
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
+ * @author F12 Ltd. <public@f12.com>
  */
 
 require_once( 'core.php' );
@@ -38,9 +39,12 @@ extract( $row, EXTR_PREFIX_ALL, 'v' );
 
 $require_login = (bool) plugin_config_get('download_requires_login', null, false, NO_USER, $v_project_id);
 
-//To ensure that only logged user will be able to download file
-if ($require_login){
-    auth_get_current_user_id();
+if ($require_login)
+{
+// To ensure that only logged user will be able to download file:
+	$t_current_user_id = auth_get_current_user_id();
+// To ensure that the user will be able to download file only if he/she has at least REPORTER rights to the project:
+	access_ensure_project_level( REPORTER, $v_project_id, $t_current_user_id );
 }
 
 # throw away output buffer contents (and disable it) to protect download

@@ -7,12 +7,13 @@
  * modified for new Mantis plugin system by Jiri Hron
  *
  * Created: 2008-01-05
- * Last update: 2012-05-23
+ * Last update: 2013-05-03
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
+ * @author F12 Ltd. <public@f12.com>
  */
 
 require_once( 'core.php' );
@@ -31,9 +32,8 @@ $t_version = gpc_get_int( 'release', 0 );
 $t_current_user_id = auth_get_current_user_id();
 $t_project_id = helper_get_current_project();
 
-if ( user_get_access_level( $t_current_user_id ) < plugin_config_get( 'upload_threshold_level', PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT ) ) {
-    access_denied();
-}
+// The same condition as for the upload controls displayed:
+access_ensure_project_level( plugin_config_get( 'upload_threshold_level', PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT ), $t_project_id, $t_current_user_id );
 
 for( $i=0; $i<$t_file_count; $i++ ) {
     $t_file_error[$i] = ( isset( $t_file[$i]['error'] ) ) ? $t_file[$i]['error'] : 0;
@@ -56,8 +56,8 @@ if ( plugin_config_get( 'notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_E
     for( $i=0; $i<$t_file_count; $i++ ) {
         $t_template['files'][$i] = array();
         $t_template['files'][$i]['file_name'] = $t_file[$i]['name'];
-        $t_template['files'][$i]['file_description'] = $t_description;
-        $t_template['files'][$i]['file_html_description'] = string_display_links( $t_description );
+        $t_template['files'][$i]['file_description'] = $t_description[$i];
+        $t_template['files'][$i]['file_html_description'] = string_display_links( $t_description[$i] );
         $t_template['files'][$i]['file_url'] = config_get( 'path' ) . plugin_page( 'download' , true) . '&id=' . $t_file_id[$i];
         $t_template['files'][$i]['file_size'] = number_format( $t_file[$i]['size'] );
         $t_template['files'][$i]['file_date'] = date( config_get( 'normal_date_format' ), plugins_releasemgt_file_get_field( $t_file_id[$i], 'date_added'  ) );

@@ -1,18 +1,33 @@
 <?php
+/**
+ * ReleaseMgt plugin
+ *
+ * Original author Vincent DEBOUT
+ * modified for new Mantis plugin system by Jiri Hron
+ *
+ * Created: 2008-01-05
+ * Last update: 2013-05-03
+ *
+ * @link http://deboutv.free.fr/mantis/
+ * @copyright
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
+ * @author Jiri Hron <jirka.hron@gmail.com>
+ * @author F12 Ltd. <public@f12.com>
+ */
 class ReleasemgtPlugin extends MantisPlugin {
     function register() {
         $this->name = 'Release management';
-        $this->description = 'Adding possibility to atach file to released versions.';
+        $this->description = 'Adding possibility to attach file to released versions.';
         $this->page = 'config';
 
-        $this->version = '1.0';
+        $this->version = '1.2';
         $this->requires = array(
             'MantisCore' => '1.2.0, >= 1.2.0',
             );
 
         $this->author = 'Vincent DEBOUT, Jiri Hron';
         $this->contact = 'jirka.hron@gmail.com';
-        $this->url = '$this->url = 'http://code.google.com/p/mantis-releasemgt/';
+        $this->url = 'http://code.google.com/p/mantis-releasemgt/';
     }
 
     function init() {

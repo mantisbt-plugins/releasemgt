@@ -7,25 +7,25 @@
  * modified for new Mantis plugin system by Jiri Hron
  *
  * Created: 2008-01-05
- * Last update: 2012-05-23
+ * Last update: 2013-05-03
  *
  * @link http://deboutv.free.fr/mantis/
  * @copyright
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
+ * @author F12 Ltd. <public@f12.com>
  */
 
+echo $t_template['files_count'] == 1 ? "A new file has been" : $t_template['files_count'] . " new files have been";
+echo " UPLOADED for the " . $t_template['project_name'] . " project.";
+echo PHP_EOL . "==========================================" . PHP_EOL;
+
+for( $i=0; $i<$t_template['files_count']; $i++ )
+{
+	echo PHP_EOL . ($t_template['files_count'] > 1 ? PHP_EOL . ($i+1) . ". file: " : "File: ")
+		. $t_template['files'][$i]['file_name'] . PHP_EOL;
+	echo PHP_EOL . "Description:" . PHP_EOL . $t_template['files'][$i]['file_description'] . PHP_EOL;
+	echo PHP_EOL . "You can download it at the following address:"
+		. PHP_EOL . $t_template['files'][$i]['file_url'] . PHP_EOL . PHP_EOL;
+}
 ?>
-Hello,
-
-<?php if ( $t_template['files_count'] == 1 ) { ?>A new file has been uploaded.<?php } else { ?>New files have been uploaded.<?php } ?>
-
-<?php for( $i=0; $i<$t_template['files_count']; $i++ ) { ?>- <?php echo $t_template['files'][$i]['file_name']; ?>
-
-<?php echo $t_template['files'][$i]['file_description']; ?>
-
-
-You can donwload it at the following address:
-
-<?php echo $t_template['files'][$i]['file_url']; ?>
-<?php } ?>
