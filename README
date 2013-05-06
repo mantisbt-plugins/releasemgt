@@ -1,0 +1,27 @@
+Release Management Plugin
+
+
+Description
+
+This plugin allows user to store the files to download for each release. An
+email is sent to the developer during the file upload.
+
+Features:
+
+  - Email notification (to developer and/or user who reports a bug)
+  - Email templates
+  - Easy to install.
+
+
+Requirements
+
+  - MantisBT 1.2
+
+
+Authors and original code
+
+  - Vincent Debout <deboutv@free.fr>
+    http://deboutv.free.fr/mantis/plugin.php?plugin=ReleaseMgt
+  - Jiri Hron <jirka.hron@gmail.com>
+    http://code.google.com/p/mantis-releasemgt/
+    
