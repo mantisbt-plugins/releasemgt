@@ -85,11 +85,7 @@ function plugins_releasemgt_diskfile_is_name_unique( $p_name, $p_filepath ) {
     $result = db_query_bound( $query, array( $c_name ) );
     $t_count = db_result( $result );
 
-    if ( $t_count > 0 ) {
-        return false;
-    } else {
-        return true;
-    }
+    return $t_count < 1;
 }
 
 function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_version_id ) {
@@ -105,11 +101,7 @@ function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_vers
     $result = db_query_bound( $query, array( $c_name, (int)$p_project_id, (int)$p_version_id ) );
     $t_count = db_result( $result );
 
-    if ( $t_count > 0 ) {
-        return false;
-    } else {
-        return true;
-    }
+    return $t_count < 1;
 }
 
 function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $p_project_id, $p_version_id, $p_description, $p_file_error ) {
