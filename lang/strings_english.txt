@@ -1,13 +1,10 @@
 <?php
 /**
- * ReleaseMgt plugin.
- *
- *
- * Created: 2008-01-05
- * Last update: 2008-01-05
+ * ReleaseMgt plugin
  *
  * @link http://deboutv.free.fr/mantis/
- * @author Vincent DEBOUT <deboutv@free.fr>
+ * @copyright Copyright (c) 2008 Vincent Debout
+ * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  */
 
 /* Link string */

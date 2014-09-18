@@ -1,16 +1,13 @@
 <?php
-
 /**
  * ReleaseMgt plugin
  *
  * Original author Vincent DEBOUT
  * modified for new Mantis plugin system by Jiri Hron
  *
- * Created: 2008-01-05
- * Last update: 2013-05-03
- *
  * @link http://deboutv.free.fr/mantis/
- * @copyright
+ * @copyright Copyright (c) 2008 Vincent Debout
+ * @copyright Copyright (c) 2012 Jiri Hron
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
  * @author F12 Ltd. <public@f12.com>
@@ -28,4 +25,3 @@ for( $i=0; $i<$t_template['files_count']; $i++ )
 	echo PHP_EOL . "You can download it at the following address:"
 		. PHP_EOL . $t_template['files'][$i]['file_url'] . PHP_EOL . PHP_EOL;
 }
-?>
