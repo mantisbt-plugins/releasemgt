@@ -92,7 +92,7 @@ if ( is_browser_internet_explorer() || is_browser_chrome() ) {
 } else {
         // For most other browsers, we can use this technique:
         // http://greenbytes.de/tech/tc2231/#attfnboth2
-        header( 'Content-Disposition:' . $t_disposition . ' filename*=UTF-8\'\'' . $t_filename . '; filename="' . $t_filename . '"' );
+        header( 'Content-Disposition:' . $t_disposition . ' filename*=UTF-8\'\'' . rawurlencode ( $t_filename ) . '; filename="' . $t_filename . '"' );
 }
 
 header( 'Content-Length: ' . $v_filesize );

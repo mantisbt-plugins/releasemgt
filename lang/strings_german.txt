@@ -1,0 +1,52 @@
+﻿<?php
+/**
+ * ReleaseMgt plugin.
+ *
+ *
+ * Created: 2008-01-05
+ * Last update: 2014-09-18
+ *
+ * @link http://deboutv.free.fr/mantis/
+ * @author Vincent DEBOUT <deboutv@free.fr>
+ */
+
+/* Link string */
+
+$s_plugin_releasemgt_link = 'Download';
+$s_plugin_releasemgt_download_link = 'Download';
+$s_plugin_releasemgt_releases_link = 'Releases';
+
+
+/* Display page */
+
+$s_plugin_releasemgt_display_page_title = 'Download';
+$s_plugin_releasemgt_upload_title = 'Datei-Upload';
+$s_plugin_releasemgt_file_count = 'Anzahl Dateien';
+
+/* Configuration page */
+
+$s_plugin_releasemgt_configuration_page_title = 'ReleaseMgt Plugin Konfiguration';
+$s_plugin_releasemgt_configuration_for_project = 'Konfiguration für Projekt %%project%%';
+$s_plugin_releasemgt_upload_access_level = 'Zugriffslevel für Datei-Upload';
+$s_plugin_releasemgt_upload_method = 'Upload Modus';
+$s_plugin_releasemgt_method_disk = 'Dateisystem';
+$s_plugin_releasemgt_method_database = 'Datenbank';
+$s_plugin_releasemgt_method_ftp = 'FTP';
+$s_plugin_releasemgt_disk_path = 'Zielverzeichnis (für Upload Modus: Dateisystem)';
+$s_plugin_releasemgt_ftp_server = 'FTP Server (für Upload Modus: FTP)';
+$s_plugin_releasemgt_ftp_user = 'FTP Benutzername (für Upload Modus: FTP)';
+$s_plugin_releasemgt_ftp_pass = 'FTP Passwort (für Upload Modus: FTP)';
+$s_plugin_releasemgt_notification_enable = 'E-Mail Benachrichtigung';
+$s_plugin_releasemgt_notify_handler = 'Benachrichtigung Bearbeiter';
+$s_plugin_releasemgt_notify_reporter = 'Benachrichtigung Reporter';
+$s_plugin_releasemgt_notify_email = 'E-Mails (getrennt durch \',\')';
+$s_plugin_releasemgt_email_template = 'E-Mail Vorlage';
+$s_plugin_releasemgt_email_subject = 'E-Mail Betreff';
+$s_plugin_releasemgt_download_requires_login = 'Download nur nach Login';
+
+/* Help link */
+
+$s_plugin_releasemgt_email_subject_help = 'Sie können den Betreff der E-Mail angeben. Um dies zu tun, müssen Sie folgendes verwenden:<ul><li><b>**</b>: *</li><li><b>*c</b>: Anzahl hinzugefügter Dateien</li><li><b>*p</b>: Projektname</li><li><b>*v</b>: Projektversion.</li></ul>';
+
+/* Error messages */
+$MANTIS_ERROR[ERROR_FILE_NOT_FOUND] = 'Datei nicht gefunden.';
