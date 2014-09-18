@@ -18,7 +18,7 @@ class ReleasemgtPlugin extends MantisPlugin {
         $this->description = 'Adding possibility to attach file to released versions.';
         $this->page = 'config';
 
-        $this->version = '1.2';
+        $this->version = '1.2.1';
         $this->requires = array(
             'MantisCore' => '1.2.0, >= 1.2.0',
             );
