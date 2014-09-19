@@ -5,11 +5,9 @@
  * Original author Vincent DEBOUT
  * modified for new Mantis plugin system by Jiri Hron
  *
- * Created: 2008-01-05
- * Last update: 2013-05-03
- *
  * @link http://deboutv.free.fr/mantis/
- * @copyright
+ * @copyright Copyright (c) 2008 Vincent Debout
+ * @copyright Copyright (c) 2012 Jiri Hron
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
  * @author F12 Ltd. <public@f12.com>
@@ -27,8 +25,8 @@ $t_file_table = plugin_table('file');
 
 $query = "SELECT *
 		FROM $t_file_table
-		WHERE id='$c_file_id'";
-$result = db_query( $query );
+			  WHERE id=" . db_param();
+$result = db_query_bound( $query, array( (int)$t_id ) );
 $row = db_fetch_array( $result );
 
 if (!$row){
@@ -118,7 +116,4 @@ switch ( plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DE
   default:
     echo $v_content;
 }
-?>
-<?php
-html_page_bottom();
 ?>
