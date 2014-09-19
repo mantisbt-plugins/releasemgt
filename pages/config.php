@@ -278,4 +278,3 @@ foreach( $t_dirs as $t_dir ) {
 
 <?php
 html_page_bottom1( );
-?>
