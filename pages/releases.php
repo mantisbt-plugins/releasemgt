@@ -5,11 +5,9 @@
  * Original author Vincent DEBOUT
  * modified for new Mantis plugin system by Jiri Hron
  *
- * Created: 2008-01-05
- * Last update: 2013-05-03
- *
  * @link http://deboutv.free.fr/mantis/
- * @copyright
+ * @copyright Copyright (c) 2008 Vincent Debout
+ * @copyright Copyright (c) 2012 Jiri Hron
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
  * @author F12 Ltd. <public@f12.com>
@@ -46,8 +44,11 @@ foreach( $t_releases as $t_release ) {
     $t_release_title = string_display( $t_project_name ) . ' - ' . string_display( $t_release['version'] );
     echo '<tt>' . $t_release_title . '<br />';
     echo str_pad( '', strlen( $t_release_title ), '=' ), '</tt><br /><br />';
-    $t_query = 'SELECT id, title, filesize, description FROM ' . plugin_table('file') . ' WHERE project_id=' . db_prepare_int( $t_prj_id ) . ' AND version_id=' . db_prepare_int( $t_release['id'] ) . ' ORDER BY title ASC';
-    $t_result = db_query( $t_query );
+    $t_query = 'SELECT id, title, filesize, description
+		FROM ' . plugin_table('file') . '
+		WHERE project_id=' . db_param() . ' AND version_id=' . db_param() . '
+		ORDER BY title ASC';
+    $t_result = db_query_bound( $t_query, array( (int)$t_prj_id, (int)$t_release['id'] ) );
     while( $t_row = db_fetch_array( $t_result ) ) {
         echo '- <a href="' . plugin_page( 'download' ) . '&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
 			. $t_row['title'] . '</a>';
