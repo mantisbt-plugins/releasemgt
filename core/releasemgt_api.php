@@ -1,16 +1,13 @@
 <?php
-
 /**
  * ReleaseMgt plugin
  *
  * Original author Vincent DEBOUT
  * modified for new Mantis plugin system by Jiri Hron
  *
- * Created: 2008-01-05
- * Last update: 2012-05-23
- *
  * @link http://deboutv.free.fr/mantis/
- * @copyright
+ * @copyright Copyright (c) 2008 Vincent Debout
+ * @copyright Copyright (c) 2012 Jiri Hron
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
  */
@@ -33,14 +30,13 @@ function plugins_releasemgt_file_ftp_connect() {
 }
 
 function plugins_releasemgt_file_get_field( $p_file_id, $p_field_name ) {
-    $c_file_id 	= db_prepare_int( $p_file_id );
     $c_field_name = db_prepare_string( $p_field_name );
     $t_file_table = plugin_table('file');
 
     $query = "SELECT $c_field_name
 				  FROM $t_file_table
-				  WHERE id='$c_file_id'";
-    $result = db_query( $query, 1 );
+				  WHERE id=" . db_param();
+    $result = db_query_bound( $query, array( (int)$p_file_id ), 1 );
 
     return db_result( $result );
 }
@@ -48,7 +44,6 @@ function plugins_releasemgt_file_get_field( $p_file_id, $p_field_name ) {
 function plugins_releasemgt_file_delete( $p_file_id ) {
     $t_upload_method = plugin_config_get( 'upload_method', UPLOAD_METHOD_DEFAULT );
 
-    $c_file_id = db_prepare_int( $p_file_id );
     $t_filename = plugins_releasemgt_file_get_field( $p_file_id, 'filename' );
     $t_diskfile = plugins_releasemgt_file_get_field( $p_file_id, 'diskfile' );
 
@@ -66,8 +61,8 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
 
     $t_file_table = plugin_table ( 'file' );
     $query = "DELETE FROM $t_file_table
-				WHERE id='$c_file_id'";
-    db_query( $query );
+				WHERE id=" . db_param();
+    $result = db_query_bound( $query, array( (int)$p_file_id ), 1 );
     return true;
 }
 
@@ -86,15 +81,11 @@ function plugins_releasemgt_diskfile_is_name_unique( $p_name, $p_filepath ) {
 
     $query = "SELECT COUNT(*)
 				  FROM $t_file_table
-				  WHERE diskfile='$c_name'";
-    $result = db_query( $query );
+				  WHERE diskfile=" . db_param();
+    $result = db_query_bound( $query, array( $c_name ) );
     $t_count = db_result( $result );
 
-    if ( $t_count > 0 ) {
-        return false;
-    } else {
-        return true;
-    }
+    return $t_count < 1;
 }
 
 function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_version_id ) {
@@ -106,15 +97,11 @@ function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_vers
 
     $query = "SELECT COUNT(*)
 				  FROM $t_file_table
-				  WHERE filename='$c_name' AND project_id=$c_project_id AND version_id=$c_version_id";
-    $result = db_query( $query );
+				  WHERE filename=" . db_param() . " AND project_id=" . db_param() . " AND version_id=" . db_param();
+    $result = db_query_bound( $query, array( $c_name, (int)$p_project_id, (int)$p_version_id ) );
     $t_count = db_result( $result );
 
-    if ( $t_count > 0 ) {
-        return false;
-    } else {
-        return true;
-    }
+    return $t_count < 1;
 }
 
 function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $p_project_id, $p_version_id, $p_description, $p_file_error ) {
@@ -144,8 +131,6 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
         trigger_error( ERROR_DUPLICATE_FILE, ERROR );
     }
 
-    $c_version_id = db_prepare_int( $p_version_id );
-    $c_project_id = db_prepare_int( $p_project_id );
     $c_file_type = db_prepare_string( $p_file_type );
     $c_title = db_prepare_string( $p_file_name );
     $c_desc = db_prepare_string( $p_description );
@@ -167,7 +152,6 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
     if ( $t_file_size > $t_max_file_size ) {
         trigger_error( ERROR_FILE_TOO_BIG, ERROR );
     }
-    $c_file_size = db_prepare_int( $t_file_size );
 
     $t_method = plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT );
 
@@ -195,7 +179,7 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
         }
         break;
       case DATABASE:
-        $c_content = db_prepare_string( fread( fopen( $p_tmp_file, 'rb' ), $t_file_size ) );
+        $c_content = db_prepare_binary_string( fread( fopen( $p_tmp_file, 'rb' ), $t_file_size ) );
         break;
       default:
         trigger_error( ERROR_GENERIC, ERROR );
@@ -203,10 +187,19 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
 
     $t_file_table = plugin_table ( 'file' );
     $query = "INSERT INTO $t_file_table
-						(project_id, version_id, title, description, diskfile, filename, folder, filesize, file_type, date_added, content)
+				(project_id, version_id, title, description, 
+				 diskfile, filename, folder, filesize, 
+				 file_type, date_added, content)
 					  VALUES
-						($c_project_id, $c_version_id, '$c_title', '$c_desc', '$c_disk_file_name', '$c_new_file_name', '$c_file_path', $c_file_size, '$c_file_type', '" . date("Y-m-d H:i:s") ."', '$c_content')";
-    db_query( $query );
+				(" . db_param() . ", " . db_param() . ", " . db_param() . ", " . db_param() . ", 
+				 " . db_param() . ", " . db_param() . ", " . db_param() . ", " . db_param() . ", 
+				 " . db_param() . ", " . db_param() . ", " . db_param() . ")";
+	$param = array(
+		(int)$p_project_id, (int)$p_version_id, $c_title, $c_desc, $c_disk_file_name,
+		$c_new_file_name, $c_file_path, (int)$t_file_size, $c_file_type, date("Y-m-d H:i:s"),
+		$c_content
+	);
+    db_query_bound( $query, $param );
     $t_file_id = db_insert_id();
     return $t_file_id;
 }
