@@ -1,16 +1,13 @@
 <?php
-
 /**
  * ReleaseMgt plugin
  *
  * Original author Vincent DEBOUT
  * modified for new Mantis plugin system by Jiri Hron
  *
- * Created: 2008-01-05
- * Last update: 2013-05-03
- *
  * @link http://deboutv.free.fr/mantis/
- * @copyright
+ * @copyright Copyright (c) 2008 Vincent Debout
+ * @copyright Copyright (c) 2012 Jiri Hron
  * @author Vincent DEBOUT <vincent.debout@morinie.fr>
  * @author Jiri Hron <jirka.hron@gmail.com>
  * @author F12 Ltd. <public@f12.com>
@@ -109,12 +106,15 @@ if ( plugin_config_get( 'notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_E
     }
     // Get reporter
     if ( plugin_config_get( 'notify_reporter', PLUGINS_RELEASEMGT_NOTIFY_REPORTER_DEFAULT ) == ON ) {
+		$t_query = 'SELECT reporter_id
+			FROM ' . db_get_table( 'mantis_bug_table' ) . '
+			WHERE project_id=' . db_param() . ' AND fixed_in_version=' . db_param();
         if ( $t_version == 0 ) {
-            $t_query = 'SELECT reporter_id FROM ' . db_get_table( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'\'';
+			$c_version = '';
         } else {
-            $t_query = 'SELECT reporter_id FROM ' . db_get_table( 'mantis_bug_table' ) . ' WHERE project_id=' . db_prepare_int( $t_project_id ) . ' AND fixed_in_version=\'' . db_prepare_string( version_get_field( $t_version, 'version' ) ) . '\'';
+			$c_version = version_get_field( $t_version, 'version' );
         }
-        $t_result = db_query( $t_query );
+        $t_result = db_query_bound( $t_query, array( (int)$t_project_id, db_prepare_string( $c_version ) ) );
         while( $t_row = db_fetch_array( $t_result ) ) {
             $t_id_list[] = $t_row['reporter_id'];
         }
