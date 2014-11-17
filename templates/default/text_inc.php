@@ -25,3 +25,4 @@ for( $i=0; $i<$t_template['files_count']; $i++ )
 	echo PHP_EOL . "You can download it at the following address:"
 		. PHP_EOL . $t_template['files'][$i]['file_url'] . PHP_EOL . PHP_EOL;
 }
+?>
