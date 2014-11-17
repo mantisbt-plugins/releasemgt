@@ -97,7 +97,7 @@ function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_vers
 
     $query = "SELECT COUNT(*)
 				  FROM $t_file_table
-				  WHERE filename=" . db_param() . " AND project_id=" . db_param() . "AND version_id=" . db_param();
+				  WHERE filename=" . db_param() . " AND project_id=" . db_param() . " AND version_id=" . db_param();
     $result = db_query_bound( $query, array( $c_name, (int)$p_project_id, (int)$p_version_id ) );
     $t_count = db_result( $result );
 
@@ -196,7 +196,7 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
 				 " . db_param() . ", " . db_param() . ", " . db_param() . ")";
 	$param = array(
 		(int)$p_project_id, (int)$p_version_id, $c_title, $c_desc, $c_disk_file_name,
-		$c_new_file_name, $c_file_path, (int)$c_file_size, $c_file_type, date("Y-m-d H:i:s"),
+		$c_new_file_name, $c_file_path, (int)$t_file_size, $c_file_type, date("Y-m-d H:i:s"),
 		$c_content
 	);
     db_query_bound( $query, $param );
@@ -216,3 +216,5 @@ function release_mgt_successful_redirect( $p_redirect_to ) {
     echo '</div>';
     html_page_bottom();
 }
+
+?>
