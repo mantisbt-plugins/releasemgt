@@ -12,7 +12,63 @@
  * @author Jiri Hron <jirka.hron@gmail.com>
  */
 
-require_once( $t_core_path . 'file_api.php' );
+require_once( 'file_api.php' );
+
+/*
+*/
+function releasemgt_plugin_page_title( $p_project_name, $p_page_title )
+{
+    echo '<div class="row">';
+    echo '<div class="col-md-12 col-xs-12">';
+    echo '<div class="page-header">';
+    echo '<h1><strong>' . $p_project_name, '</strong> - ', $p_page_title  . '</h1>';
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
+}
+
+function releasemgt_plugin_release_title( $p_release_title, $p_release_version )
+{
+    $t_block_id = 'release_' . $p_release_version;
+    $t_collapse_block = is_collapsed( $t_block_id );
+    $t_block_css = $t_collapse_block ? 'collapsed' : '';
+    $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
+
+    echo '<div>';
+    echo '<div id="' . $t_block_id . '" class="widget-box widget-color-blue2 ' . $t_block_css . '">';
+    echo '<div class="widget-header widget-header-small">';
+    echo '<h4 class="widget-title lighter">';
+    echo '<i class="ace-icon fa fa-retweet"></i>';
+    echo $p_release_title, lang_get( 'word_separator' );
+    echo '</h4>';
+//	echo '<div class="widget-toolbar">';
+//	echo '<a data-action="collapse" href="#">';
+//	echo '<i class="1 ace-icon fa ' . $t_block_icon . ' bigger-125"></i>';
+//	echo '</a>';
+//	echo '</div>';
+    echo '</div>';
+    echo '</div>';
+    
+/*
+	echo '<div class="widget-body">';
+	echo '<div class="widget-toolbox padding-8 clearfix">';
+	echo '<div class="pull-left"><i class="fa fa-calendar-o fa-lg"> </i> ' . $t_release_date . '</div>';
+	echo '<div class="btn-toolbar pull-right">';
+	echo '<a class="btn btn-xs btn-primary btn-white btn-round" ';
+	echo 'href="view_all_set.php?type=1&temporary=y&' . FILTER_PROPERTY_PROJECT_ID . '=' . $t_project_id .
+		 '&' . filter_encode_field_and_value( FILTER_PROPERTY_FIXED_IN_VERSION, $t_version_name ) .
+		 '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . META_FILTER_NONE . '">';
+	echo lang_get( 'view_bugs_link' );
+	echo '<a class="btn btn-xs btn-primary btn-white btn-round" href="changelog_page.php?version_id=' . $p_version_id . '">' . string_display_line( $t_version_name ) . '</a>';
+	echo '<a class="btn btn-xs btn-primary btn-white btn-round" href="changelog_page.php?project_id=' . $t_project_id . '">' . string_display_line( $t_project_name ) . '</a>';
+	echo '</a>';
+	echo '</div>';
+
+	echo '</div>';
+*/
+	echo '<div class="widget-main">';
+
+}
 
 /**
  *
@@ -48,11 +104,13 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
     $t_diskfile = plugins_releasemgt_file_get_field( $p_file_id, 'diskfile' );
 
     if( ( DISK == $t_upload_method ) || ( FTP == $t_upload_method ) ) {
+        /* IK! FTP can't be used with DISK
         if ( FTP == $t_upload_method ) {
             $ftp = plugins_releasemgt_file_ftp_connect();
             file_ftp_delete( $ftp, $t_diskfile );
             file_ftp_disconnect( $ftp );
         }
+        */
 
         if ( file_exists( $t_diskfile ) ) {
             file_delete_local( $t_diskfile );
@@ -67,9 +125,16 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
 }
 
 function plugins_releasemgt_file_generate_unique_name( $p_seed, $p_filepath ) {
+    $t_string = $p_seed;
+    while ( !plugins_releasemgt_diskfile_is_name_unique( $t_string , $p_filepath ) )
+    {
+        $t_string = file_generate_unique_name( $p_seed );
+    }
+    /*
     do {
-        $t_string = file_generate_name( $p_seed );
+        $t_string = file_generate_unique_name( $p_seed );
     } while ( !plugins_releasemgt_diskfile_is_name_unique( $t_string , $p_filepath ) );
+    */
 
     return $t_string;
 }
@@ -97,7 +162,7 @@ function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_vers
 
     $query = "SELECT COUNT(*)
 				  FROM $t_file_table
-				  WHERE filename=" . db_param() . " AND project_id=" . db_param() . "AND version_id=" . db_param();
+				  WHERE filename=" . db_param() . " AND project_id=" . db_param() . " AND version_id=" . db_param();
     $result = db_query_bound( $query, array( $c_name, (int)$p_project_id, (int)$p_version_id ) );
     $t_count = db_result( $result );
 
@@ -105,7 +170,7 @@ function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_vers
 }
 
 function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $p_project_id, $p_version_id, $p_description, $p_file_error ) {
-    if ( php_version_at_least( '4.2.0' ) ) {
+    if ( version_compare(PHP_VERSION, '4.2.0') >= 0 ) {
         switch ( (int) $p_file_error ) {
           case UPLOAD_ERR_INI_SIZE:
           case UPLOAD_ERR_FORM_SIZE:
@@ -140,7 +205,7 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
     $c_file_path = db_prepare_string( $t_file_path );
     $c_new_file_name = db_prepare_string( $p_file_name );
 
-    $t_file_hash = $p_version_id . '-' . $t_project_id;
+    $t_file_hash = $p_version_id . '-' . $p_project_id;
     $t_disk_file_name = $t_file_path . plugins_releasemgt_file_generate_unique_name( $t_file_hash . '-' . $p_file_name, $t_file_path );
     $c_disk_file_name = db_prepare_string( $t_disk_file_name );
 
@@ -148,30 +213,39 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
     if ( 0 == $t_file_size ) {
         trigger_error( ERROR_FILE_NO_UPLOAD_FAILURE, ERROR );
     }
-    $t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
+    //$t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
+    $t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ) );
     if ( $t_file_size > $t_max_file_size ) {
         trigger_error( ERROR_FILE_TOO_BIG, ERROR );
     }
 
     $t_method = plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT );
 
+//echo "DBG: -3, $t_file_path, method=$t_method<BR>\n";
     switch ( $t_method ) {
-      case FTP:
+      //case FTP:
       case DISK:
         file_ensure_valid_upload_path( $t_file_path );
+//echo "DBG: -2, $t_file_path<BR>\n";
 
         if ( !file_exists( $t_disk_file_name ) ) {
+//echo "DBG: -1, $t_file_path<BR>\n";
+/* IK. FTP can't be used here because in Mantis FTP === DISK
             if ( FTP == $t_method ) {
+echo "DBG: 0:0, $t_method, FTP<BR>\n";
                 $conn_id = plugins_releasemgt_file_ftp_connect();
                 file_ftp_put( $conn_id, $t_disk_file_name, $p_tmp_file );
                 file_ftp_disconnect( $conn_id );
             }
-
+*/
+//echo "DBG: 1<BR>\n";
             if ( !move_uploaded_file( $p_tmp_file, $t_disk_file_name ) ) {
                 trigger_error( FILE_MOVE_FAILED, ERROR );
             }
+//echo "DBG: 2<BR>\n";
 
             chmod( $t_disk_file_name, 0644 );
+//echo "DBG: 3<BR>\n";
 
             $c_content = '';
         } else {
@@ -196,7 +270,7 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
 				 " . db_param() . ", " . db_param() . ", " . db_param() . ")";
 	$param = array(
 		(int)$p_project_id, (int)$p_version_id, $c_title, $c_desc, $c_disk_file_name,
-		$c_new_file_name, $c_file_path, (int)$c_file_size, $c_file_type, date("Y-m-d H:i:s"),
+		$c_new_file_name, $c_file_path, (int)$t_file_size, $c_file_type, date("Y-m-d H:i:s"),
 		$c_content
 	);
     db_query_bound( $query, $param );
@@ -209,10 +283,11 @@ function plugins_releasemgt_file_add( $p_tmp_file, $p_file_name, $p_file_type, $
  * @param type $p_redirect_to
  */
 function release_mgt_successful_redirect( $p_redirect_to ) {
-    html_page_top( null, $p_redirect_to );
-    echo '<br /><div class="center">';
-    echo lang_get( 'operation_successful' ) . '<br />';
-    print_bracket_link( $p_redirect_to, lang_get( 'proceed' ) );
-    echo '</div>';
-    html_page_bottom();
+    //html_page_top( null, $p_redirect_to );
+    //echo '<br /><div class="center">';
+    //echo lang_get( 'operation_successful' ) . '<br />';
+    //print_bracket_link( $p_redirect_to, lang_get( 'proceed' ) );
+    //echo '</div>';
+    //html_page_bottom();
+    print_successful_redirect( plugin_page( 'config', true ) );
 }

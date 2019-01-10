@@ -114,7 +114,7 @@ if ( plugin_config_get( 'notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_E
         } else {
 			$c_version = version_get_field( $t_version, 'version' );
         }
-        $t_result = db_query_bound( $t_query, array( (int)$t_project_id, db_prepare_string( $c_version ) );
+        $t_result = db_query_bound( $t_query, array( (int)$t_project_id, db_prepare_string( $c_version ) ) );
         while( $t_row = db_fetch_array( $t_result ) ) {
             $t_id_list[] = $t_row['reporter_id'];
         }

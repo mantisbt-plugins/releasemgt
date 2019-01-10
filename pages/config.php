@@ -17,9 +17,14 @@ require_once( 'constant_api.php' );
 auth_reauthenticate(  );
 access_ensure_global_level( config_get( 'manage_plugin_threshold' ) );
 
-html_page_top1( plugin_lang_get('configuration_page_title') );
-html_page_top2( );
-print_manage_menu( );
+layout_page_header( plugin_lang_get( 'configuration_page_title' ) );
+
+layout_page_begin( 'manage_overview_page.php' );
+print_manage_menu( 'manage_plugin_page.php' );
+
+//html_page_top1( plugin_lang_get('configuration_page_title') );
+//html_page_top2( );
+//print_manage_menu( );
 
 $t_project_id = helper_get_current_project();
 
@@ -277,4 +282,5 @@ foreach( $t_dirs as $t_dir ) {
 
 
 <?php
-html_page_bottom1( );
+//html_page_bottom1( );
+layout_page_end();

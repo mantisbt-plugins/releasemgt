@@ -20,7 +20,7 @@ class ReleasemgtPlugin extends MantisPlugin {
 
         $this->version = '1.2.1';
         $this->requires = array(
-            'MantisCore' => '1.2.0, >= 1.2.0',
+            'MantisCore' => '2.0.0',
             );
 
         $this->author = 'Vincent DEBOUT, Jiri Hron';
@@ -29,8 +29,9 @@ class ReleasemgtPlugin extends MantisPlugin {
     }
 
     function init() {
+        $t_core = config_get_global('core_path' );
         $t_path = config_get_global('plugin_path' ). plugin_get_current() . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR;
-        set_include_path(get_include_path() . PATH_SEPARATOR . $t_path);
+        set_include_path(get_include_path() . PATH_SEPARATOR . $t_core . PATH_SEPARATOR . $t_path);
     }
 
     function hooks() {
@@ -40,7 +41,26 @@ class ReleasemgtPlugin extends MantisPlugin {
     }
 
     function showdownload_menu() {
-            return array( '<a href="' . plugin_page( 'releases' ) . '">' . plugin_lang_get( 'releases_link' ) . '</a>', );
+            //return array( '<a href="' . plugin_page( 'releases' ) . '">' . plugin_lang_get( 'releases_link' ) . '</a>', );
+            $t_page = plugin_page( 'releases', false, 'releasemgt' );
+            $t_lang = plugin_lang_get( 'releases_link', 'releasemgt' );
+            $t_menu_option = array(
+                'title' => $t_lang,
+                'url' => $t_page,
+                'access_level' => plugin_config_get( 'view_threshold' ),
+                'icon' => 'fa-download'
+            );
+            
+            return array( $t_menu_option );
+            
+            /*
+<------><------><------>$t_menu_option = array(
+<------><------><------><------>'title' => $t_lang,
+<------><------><------><------>'url' => $t_page,
+<------><------><------><------>'access_level' => plugin_config_get( 'view_threshold' ),
+<------><------><------><------>'icon' => 'fa-search'
+<------><------><------>);
+            */
     }
 
     function schema() {
