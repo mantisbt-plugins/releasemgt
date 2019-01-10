@@ -15,7 +15,11 @@ Features:
 
 Requirements
 
-  - MantisBT 1.2
+  - MantisBT 2.x
+  
+Tested 
+
+  - MantisBT 2.19.0
 
 
 Authors and original code

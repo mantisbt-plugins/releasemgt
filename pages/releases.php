@@ -26,7 +26,10 @@ function size_display($bytes)
 
 require_once( 'core.php' );
 require_once( 'bug_api.php' );
-html_page_top( plugin_lang_get( 'display_page_title' ) );
+require_once( 'releasemgt_api.php' );
+
+layout_page_header( plugin_lang_get( 'display_page_title' ) );
+layout_page_begin();
 
 $t_user_id = auth_get_current_user_id();
 $t_project_id = helper_get_current_project();
@@ -36,33 +39,44 @@ $t_project_name = project_get_name( $t_project_id );
 
 $t_user_has_upload_level = user_get_access_level( $t_user_id, $t_project_id ) >= plugin_config_get( 'upload_threshold_level', PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT );
 
-echo '<br /><span class="pagetitle">', string_display( $t_project_name ), ' - ', plugin_lang_get( 'display_page_title' ), '</span><br /><br />';
+releasemgt_plugin_page_title( string_display_line( $t_project_name ), plugin_lang_get( 'display_page_title' ) );
 
 foreach( $t_releases as $t_release ) {
     $t_prj_id = $t_release['project_id'];
     $t_project_name = project_get_field( $t_prj_id, 'name' );
     $t_release_title = string_display( $t_project_name ) . ' - ' . string_display( $t_release['version'] );
-    echo '<tt>' . $t_release_title . '<br />';
-    echo str_pad( '', strlen( $t_release_title ), '=' ), '</tt><br /><br />';
+    
     $t_query = 'SELECT id, title, filesize, description
 		FROM ' . plugin_table('file') . '
 		WHERE project_id=' . db_param() . ' AND version_id=' . db_param() . '
 		ORDER BY title ASC';
     $t_result = db_query_bound( $t_query, array( (int)$t_prj_id, (int)$t_release['id'] ) );
+    
+    if( db_num_rows( $t_result ) == 0 )
+        continue;
+    
+    releasemgt_plugin_release_title( $t_release_title, $t_release['version'] );
+        
+    echo '<ul style="padding-left: 12px">';
     while( $t_row = db_fetch_array( $t_result ) ) {
-        echo '- <a href="' . plugin_page( 'download' ) . '&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
-			. $t_row['title'] . '</a>';
+	$t_item_text = $t_row['description'];
+	if( $t_item_text != '' )
+	{
+	    $t_item_text .= ' (' . $t_row['title'] . ')';
+	}
+	else
+	{
+	    $t_item_text = $row['title'];
+	}
+        echo '<li> <a href="' . plugin_page( 'download' ) . '&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
+			. $t_item_text . '</a>';
 		echo ' - ' . size_display($t_row['filesize']);
         if ( $t_user_has_upload_level ) {
-            echo ' - [ <a href="' . plugin_page( 'delete' ) . '&id=' . $t_row['id'] . '" onclick="return confirm(\'Are you sure?\');" title=" ' . lang_get( 'delete_link' ) . '">' . lang_get( 'delete_link' ) . '</a> ]';
+            echo '&emsp; <a class="btn btn-xs btn-primary btn-white btn-round" href="' . plugin_page( 'delete' ) . '&id=' . $t_row['id'] . '" onclick="return confirm(\'Are you sure?\');" title=" ' . lang_get( 'delete_link' ) . '">' . lang_get( 'delete_link' ) . '</a>';
         }
-        if ( $t_row['description'] != '' ) {
-            echo '<br /><div style="margin-left: 10px;">' . string_display_links( $t_row['description'] ) . '</div>';
-        } else {
-            echo '<br />';
-        }
-        echo '<br />' . "\n";
     }
+    echo '</ul>';
+    echo "</div>\n";
 }
 
 if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
@@ -93,7 +107,7 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
         <span class="required">*</span><?php echo plugin_lang_get( 'file_count' ) ?>
       </td>
       <td width="85%">
-	<input name="file_count" id="file_count" type="text" size="3" maxlength="1" value="<?php echo plugin_config_get( 'file_number', PLUGINS_RELEASEMGT_FILE_NUMBER_DEFAULT ); ?>" onchange="javascript:UpdateFileField();" />
+        <input name="file_count" id="file_count" type="text" size="3" maxlength="1" value="<?php echo plugin_config_get( 'file_number', PLUGINS_RELEASEMGT_FILE_NUMBER_DEFAULT ); ?>" >
       </td>
     </tr>
     <tr class="row-1">
@@ -123,29 +137,7 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
       </td>
     </tr>
   </table>
-  <script type="text/javascript" language="javascript">
-    <!--
-
-      function UpdateFileField() {
-          var file_count = document.getElementById( 'file_count').value;
-          var inner = '';
-          var innerDescription = '';
-
-          for( var i=0; i<file_count; i++ ) {
-              if ( inner != '' ) {
-                  inner += '<br />';
-              }
-              inner += '<input name="file_' + i + '" type="file" size="40" />';
-              innerDescription += '<textarea name="description_' + i + '" cols="80" rows="10" wrap="virtual"></textarea><br/>'
-          }
-          document.getElementById( 'FileField' ).innerHTML = inner;
-          document.getElementById( 'DescriptionField' ).innerHTML = innerDescription;
-      }
-
-    UpdateFileField();
-
-    -->
-  </script>
+  <script src="<?php echo plugin_file( 'releases.js' ) ?>"></script>  
 </form>
 <?php
 
@@ -154,4 +146,4 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
 ?>
 
 <?php
-    html_page_bottom();
+    layout_page_end();
