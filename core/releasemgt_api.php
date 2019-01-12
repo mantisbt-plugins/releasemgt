@@ -14,6 +14,15 @@
 
 require_once( 'file_api.php' );
 
+function releasemgt_plugin_page_path( $p_page_name )
+{
+    return plugin_route_group() . '/pages/' . $p_page_name . '.php';
+}
+
+function releasemgt_plugin_page_url( $p_page_name )
+{
+    return helper_mantis_url( releasemgt_plugin_page_path( $p_page_name ) );
+}
 /*
 */
 function releasemgt_plugin_page_title( $p_project_name, $p_page_title )
@@ -69,6 +78,31 @@ function releasemgt_plugin_release_title( $p_release_title, $p_release_version )
 	echo '<div class="widget-main">';
 
 }
+
+function releasemgt_plugin_upload_title( $p_title = 'Upload files' )
+{
+    $t_block_id = 'section_upload';
+    $t_collapse_block = is_collapsed( $t_block_id );
+    $t_block_css = $t_collapse_block ? 'collapsed' : '';
+    $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
+
+    echo '<div>';
+    echo '<div id="' . $t_block_id . '" class="widget-box widget-color-blue2 ' . $t_block_css . '">';
+    echo '<div class="widget-header widget-header-small">';
+    echo '<h4 class="widget-title lighter">';
+    echo '<i class="ace-icon fa fa-upload"></i>';
+    echo $p_title, lang_get( 'word_separator' );
+    echo '</h4>';
+//	echo '<div class="widget-toolbar">';
+//	echo '<a data-action="collapse" href="#">';
+//	echo '<i class="1 ace-icon fa ' . $t_block_icon . ' bigger-125"></i>';
+//	echo '</a>';
+//	echo '</div>';
+    echo '</div>';
+    echo '</div>';
+    echo '<div class="widget-main">';
+}
+
 
 /**
  *

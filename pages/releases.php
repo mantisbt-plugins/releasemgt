@@ -68,7 +68,9 @@ foreach( $t_releases as $t_release ) {
 	{
 	    $t_item_text = $row['title'];
 	}
-        echo '<li> <a href="' . plugin_page( 'download' ) . '&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
+//        echo '<li> <a href="' . plugin_page( 'download' ) . '&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
+//        echo '<li> <a href="' . plugin_page( 'download' ) . '&cache_key=1&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
+        echo '<li> <a href="' . releasemgt_plugin_page_url( 'download' ) . '?id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
 			. $t_item_text . '</a>';
 		echo ' - ' . size_display($t_row['filesize']);
         if ( $t_user_has_upload_level ) {
@@ -82,7 +84,8 @@ foreach( $t_releases as $t_release ) {
 if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
     $t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
     echo '<br /><hr />' . "\n";
-    echo '<br /><span class="pagetitle">', plugin_lang_get( 'upload_title' ), '</span><br /><br />';
+//    echo '<br /><span class="pagetitle">', plugin_lang_get( 'upload_title' ), '</span><br /><br />';
+    releasemgt_plugin_upload_title( plugin_lang_get('upload_title') );
 ?>
 
 <form action="<?php echo plugin_page( 'upload' ); ?>" method="post" enctype="multipart/form-data">
@@ -113,7 +116,7 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
     <tr class="row-1">
       <td class="category" width="15%">
         <span class="required">*</span><?php echo lang_get( 'select_file' ) ?><br />
-        <?php echo '<span class="small">(' . lang_get( 'max_file_size' ) . ': ' . number_format( $t_max_file_size/1000 ) . 'kB)</span>'?>
+        <?php echo '<span class="small">(' . lang_get( 'max_file_size_label' ) . ': ' . number_format( $t_max_file_size/1000 ) . 'kB)</span>'?>
       </td>
       <td width="85%">
         <div id="FileField"></div>
@@ -133,14 +136,14 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
         <span class="required"> * <?php echo lang_get( 'required' ) ?></span>
       </td>
       <td class="center">
-        <input type="submit" class="button" value="<?php echo lang_get( 'upload_file_button' ) ?>" />
+        <input type="submit" class="button" value="<?php echo lang_get( 'upload_files_button' ) ?>" />
       </td>
     </tr>
   </table>
   <script src="<?php echo plugin_file( 'releases.js' ) ?>"></script>  
 </form>
 <?php
-
+    echo "</div>\n";
 }
 
 ?>

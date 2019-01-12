@@ -13,10 +13,39 @@
  * @author F12 Ltd. <public@f12.com>
  */
 
+# Prevent output of HTML in the content if errors occur
+//define( 'DISABLE_INLINE_ERROR_REPORTING', true );
+
+$g_bypass_headers = true; # suppress headers as we will send our own later
+define( 'COMPRESSION_DISABLED', true );
+
+/*
 require_once( 'core.php' );
 require_once( 'bug_api.php' );
+require_api( 'gpc_api.php' );
+require_api( 'http_api.php' );
+*/
+require_once( '../../../core.php' );
+require_api( 'access_api.php' );
+require_api( 'authentication_api.php' );
+require_api( 'bug_api.php' );
+require_api( 'config_api.php' );
+require_api( 'constant_inc.php' );
+require_api( 'database_api.php' );
+require_api( 'file_api.php' );
+require_api( 'gpc_api.php' );
+require_api( 'http_api.php' );
+require_api( 'utility_api.php' );
 
-html_page_top( plugin_lang_get( 'display_page_title' ) );
+error_log('DBG: start download');
+
+plugin_push_current( 'releasemgt' );
+
+error_log( 'DBG: $g_csp = "' . ($g_csp === null ? 'null' : $g_csp) . '"' );
+
+//html_page_top( plugin_lang_get( 'display_page_title' ) );
+//layout_page_header( plugin_lang_get( 'display_page_title' ) );
+//layout_page_begin();
 
 $t_id = gpc_get_int( 'id' );
 $c_file_id = db_prepare_int( $t_id );
@@ -29,9 +58,11 @@ $query = "SELECT *
 $result = db_query_bound( $query, array( (int)$t_id ) );
 $row = db_fetch_array( $result );
 
+//error_log( "DBG: 1" );
 if (!$row){
     trigger_error( ERROR_FILE_NOT_FOUND, ERROR );
 }
+//error_log( "DBG: 2" );
 
 extract( $row, EXTR_PREFIX_ALL, 'v' );
 
@@ -44,15 +75,19 @@ if ($require_login)
 // To ensure that the user will be able to download file only if he/she has at least REPORTER rights to the project:
 	access_ensure_project_level( REPORTER, $v_project_id, $t_current_user_id );
 }
+error_log( 'DBG: 1' );
 
 # throw away output buffer contents (and disable it) to protect download
 while ( @ob_end_clean() );
+error_log( 'DBG: ob_end_clean' );
 
 if ( ini_get( 'zlib.output_compression' ) && function_exists( 'ini_set' ) ) {
         ini_set( 'zlib.output_compression', false );
 }
+error_log( 'DBG: zlib done' );
 
 http_security_headers();
+error_log( 'DBG: http_security_headers' );
 
 # Make sure that IE can download the attachments under https.
 header( 'Pragma: public' );
@@ -73,6 +108,8 @@ header( 'Expires: ' . gmdate( 'D, d M Y H:i:s \G\M\T', time() ) );
 header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s \G\M\T', $v_date_added ) );
 
 $t_filename = file_get_display_name( $v_filename );
+error_log( 'DBG: $t_filename' . $t_filename );
+
 # For Internet Explorer 8 as per http://blogs.msdn.com/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx
 # Don't let IE second guess our content-type!
 header( 'X-Content-Type-Options: nosniff' );
@@ -97,12 +134,15 @@ header( 'Content-Length: ' . $v_filesize );
 
 header( 'Content-Type: ' . $v_file_type );
 
+error_log( "DBG: just before download" );
+
 switch ( plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT ) ) {
   case DISK:
     if ( file_exists( $v_diskfile ) ) {
         readfile( $v_diskfile );
     }
     break;
+    /*
   case FTP:
     if ( file_exists( $v_diskfile ) ) {
         readfile( $v_diskfile );
@@ -113,9 +153,10 @@ switch ( plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DE
         readfile( $v_diskfile );
     }
     break;
+    */
   default:
     echo $v_content;
 }
 ?>
 <?php
-html_page_bottom();
+//    layout_page_end();
