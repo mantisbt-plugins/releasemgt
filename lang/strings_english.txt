@@ -17,7 +17,7 @@ $s_plugin_releasemgt_releases_link = 'Releases';
 /* Display page */
 
 $s_plugin_releasemgt_display_page_title = 'Release downloads';
-$s_plugin_releasemgt_upload_title = 'Upload a file';
+$s_plugin_releasemgt_upload_title = 'Upload file(s)';
 $s_plugin_releasemgt_file_count = 'Number of files to upload';
 
 /* Configuration page */
