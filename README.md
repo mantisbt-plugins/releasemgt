@@ -8,18 +8,19 @@ email is sent to the developer during the file upload.
 
 ## Features:
 
-  - Email notification (to developer and/or user who reports a bug)
-  - Email templates
-  - Easy to install.
+  * Email notification (to developer and/or user who reports a bug)
+  * Email templates
+  * Easy to install.
 
 
 ## Requirements
 
-  - MantisBT 2.x
+  * MantisBT 2.x
+  * See [master-1-2-x branch](https://github.com/mantisbt-plugins/releasemgt/tree/master-1-2-x) for the Mantis 1.2 version.
   
 ## Tested 
 
-  - MantisBT 2.19.0
+  * MantisBT 2.19.0
 
 ## Screenshots
 
