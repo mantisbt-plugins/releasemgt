@@ -16,14 +16,14 @@ $s_plugin_releasemgt_releases_link = 'Releases';
 
 /* Display page */
 
-$s_plugin_releasemgt_display_page_title = 'Download';
-$s_plugin_releasemgt_upload_title = 'Upload a file';
+$s_plugin_releasemgt_display_page_title = 'Release downloads';
+$s_plugin_releasemgt_upload_title = 'Upload file(s)';
 $s_plugin_releasemgt_file_count = 'Number of files to upload';
 
 /* Configuration page */
 
 $s_plugin_releasemgt_configuration_page_title = 'ReleaseMgt Plugin Configuration';
-$s_plugin_releasemgt_configuration_for_project = 'Configuration for %%project%% project.';
+$s_plugin_releasemgt_configuration_for_project = 'Project %%project%% - Releases configuration';
 $s_plugin_releasemgt_upload_access_level = 'Upload access level';
 $s_plugin_releasemgt_upload_method = 'Upload method';
 $s_plugin_releasemgt_method_disk = 'Disk';
@@ -40,6 +40,16 @@ $s_plugin_releasemgt_notify_email = 'Emails (separated by \',\')';
 $s_plugin_releasemgt_email_template = 'Email template';
 $s_plugin_releasemgt_email_subject = 'Email subject';
 $s_plugin_releasemgt_download_requires_login = 'Require login for download';
+$s_plugin_releasemgt_max_file_ini_upload = 'upload_max_size in php.ini';
+$s_plugin_releasemgt_max_file_ini_post   = 'post_max_size in php.ini';
+$s_plugin_releasemgt_max_file_mantis_cfg = 'Mantis max_file_size';
+
+
+/* Releases page */
+$s_plugin_releasemgt_confirm_delete_file = 'Are you sure you want delete file?';
+$s_plugin_releasemgt_confirm_delete_version = 'Are you sure you want delete all files for this verion?';
+$s_plugin_releasemgt_disable_link = 'Disable';
+$s_plugin_releasemgt_enable_link = 'Enable';
 
 /* Help link */
 
