@@ -117,5 +117,3 @@ switch ( plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DE
     echo $v_content;
 }
 ?>
-<?php
-html_page_bottom();

@@ -155,3 +155,4 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
 
 <?php
     html_page_bottom();
+?>

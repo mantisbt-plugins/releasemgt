@@ -28,3 +28,5 @@ access_ensure_project_level( plugin_config_get( 'upload_threshold_level', PLUGIN
 plugins_releasemgt_file_delete( $t_id );
 
 release_mgt_successful_redirect(plugin_page( 'releases', true ));
+
+?>

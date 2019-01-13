@@ -26,3 +26,5 @@ define( 'PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT', '' );
 define( 'PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT', '[*P]: *c new file(s) has(ve) been added.' );
 define( 'PLUGINS_RELEASEMGT_EMAIL_TEMPLATE_DEFAULT', 'default' );
 define( 'ERROR_FILE_NOT_FOUND', 510 );
+
+?>
