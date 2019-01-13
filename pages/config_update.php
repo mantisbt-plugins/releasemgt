@@ -71,4 +71,4 @@
 
     form_security_purge( 'plugin_Releasemgt_config_update' );
 
-    release_mgt_successful_redirect(plugin_page( 'config', true ));
+    release_mgt_successful_redirect( 'config' );

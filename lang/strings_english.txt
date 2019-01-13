@@ -23,7 +23,7 @@ $s_plugin_releasemgt_file_count = 'Number of files to upload';
 /* Configuration page */
 
 $s_plugin_releasemgt_configuration_page_title = 'ReleaseMgt Plugin Configuration';
-$s_plugin_releasemgt_configuration_for_project = 'Configuration for %%project%% project.';
+$s_plugin_releasemgt_configuration_for_project = 'Project %%project%% - Releases configuration';
 $s_plugin_releasemgt_upload_access_level = 'Upload access level';
 $s_plugin_releasemgt_upload_method = 'Upload method';
 $s_plugin_releasemgt_method_disk = 'Disk';
@@ -40,6 +40,10 @@ $s_plugin_releasemgt_notify_email = 'Emails (separated by \',\')';
 $s_plugin_releasemgt_email_template = 'Email template';
 $s_plugin_releasemgt_email_subject = 'Email subject';
 $s_plugin_releasemgt_download_requires_login = 'Require login for download';
+$s_plugin_releasemgt_max_file_ini_upload = 'upload_max_size in php.ini';
+$s_plugin_releasemgt_max_file_ini_post   = 'post_max_size in php.ini';
+$s_plugin_releasemgt_max_file_mantis_cfg = 'Mantis max_file_size';
+
 
 /* Releases page */
 $s_plugin_releasemgt_confirm_delete_file = 'Are you sure you want delete file?';

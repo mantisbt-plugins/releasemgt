@@ -78,8 +78,14 @@ foreach( $t_releases as $t_release ) {
 	    $t_file_class = 'releasemgt-disabled-file';
         }
 	
-        echo '<li style="padding-bottom: 6px;" class="' . $t_file_class . '">'  . $t_item_prefix . '<a class="' . $t_file_class . '"  href="' . releasemgt_plugin_page_url( 'download' ) . '?id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
-			. $t_row['title'] . '</a>' . $t_item_postfix;
+        // Attention! Do not use plugin_page() for download link
+        // It causes security header to be submitted prior plugin 
+        // has a chance to disable default header submission. 
+        // As result "download" header can't be submitted properly
+        // So, we are using releasemgt_plugin_page_url() instead
+        echo '<li style="padding-bottom: 6px;" class="' . $t_file_class . '">' . $t_item_prefix 
+    	    . '<a class="' . $t_file_class . '"  href="' . releasemgt_plugin_page_url( 'download' ) . '?id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
+	    . $t_row['title'] . '</a>' . $t_item_postfix;
 		echo ' - ' . size_display($t_row['filesize']);
         if ( $t_user_has_upload_level ) {
             $t_enable_text =  plugin_lang_get( $t_row['enabled'] ? 'disable_link' : 'enable_link' );
@@ -92,16 +98,17 @@ foreach( $t_releases as $t_release ) {
 }
 
 if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
-    $t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
+    //$t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
+    $t_max_file_size = releasemgt_max_upload_size()[0];
     echo '<br /><hr />' . "\n";
-    releasemgt_plugin_upload_title( plugin_lang_get('upload_title') );
+    releasemgt_plugin_section_title( plugin_lang_get('upload_title'), 'fa-upload',  'releasemgt_upload' );
 ?>
 
 <form action="<?php echo plugin_page( 'upload' ); ?>" method="post" enctype="multipart/form-data">
   <input type="hidden" name="plugin" value="releasemgt" />
   <input type="hidden" name="display" value="upload" />
   <input type="hidden" name="max_file_size" value="<?php echo $t_max_file_size ?>" />
-  <table class="width100" cellspacing="1">
+  <table class="width100 table table-striped table-bordered table-condensed" cellspacing="1">
     <tr class="row-1">
       <td class="category" width="15%">
         <?php echo lang_get( 'product_version' ) ?>
@@ -125,7 +132,7 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
     <tr class="row-1">
       <td class="category" width="15%">
         <span class="required">*</span><?php echo lang_get( 'select_file' ) ?><br />
-        <?php echo '<span class="small">(' . lang_get( 'max_file_size_label' ) . ': ' . number_format( $t_max_file_size/1000 ) . 'kB)</span>'?>
+        <?php echo '<span class="small">(' . lang_get( 'max_file_size_label' ) . ' ' . number_format( $t_max_file_size/1000 ) . 'kB)</span>'?>
       </td>
       <td width="85%">
         <div id="FileField"></div>
@@ -145,10 +152,10 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
         <span class="required"> * <?php echo lang_get( 'required' ) ?></span>
       </td>
       <td class="center">
-        <input type="submit" class="button" value="<?php echo lang_get( 'upload_files_button' ) ?>" />
       </td>
     </tr>
   </table>
+  <input type="submit" class="button" value="<?php echo lang_get( 'upload_files_button' ) ?>" />
   <script src="<?php echo plugin_file( 'releases.js' ) ?>"></script>  
 </form>
 <?php
