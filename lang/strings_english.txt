@@ -41,6 +41,12 @@ $s_plugin_releasemgt_email_template = 'Email template';
 $s_plugin_releasemgt_email_subject = 'Email subject';
 $s_plugin_releasemgt_download_requires_login = 'Require login for download';
 
+/* Releases page */
+$s_plugin_releasemgt_confirm_delete_file = 'Are you sure you want delete file?';
+$s_plugin_releasemgt_confirm_delete_version = 'Are you sure you want delete all files for this verion?';
+$s_plugin_releasemgt_disable_link = 'Disable';
+$s_plugin_releasemgt_enable_link = 'Enable';
+
 /* Help link */
 
 $s_plugin_releasemgt_email_subject_help = 'You can specify the subject of the email. To do that you can use the following shortcut:<ul><li><b>**</b>: *</li><li><b>*c</b>: Number of file added</li><li><b>*p</b>: The project name</li><li><b>*v</b>: The project version.</li></ul>';

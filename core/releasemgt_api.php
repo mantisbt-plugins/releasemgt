@@ -158,18 +158,21 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
     return true;
 }
 
+function plugins_releasemgt_file_enable( $p_file_id, $p_enable ) {
+    $t_file_table = plugin_table ( 'file' );
+    $query = "UPDATE $t_file_table"
+	   . ' SET enabled=' . db_param()
+	   . ' WHERE id=' . db_param();
+    $result = db_query_bound( $query, array( (int)($p_enable ? 1 : 0), (int)$p_file_id, ), 1 );
+    return true;
+}
+
 function plugins_releasemgt_file_generate_unique_name( $p_seed, $p_filepath ) {
     $t_string = $p_seed;
     while ( !plugins_releasemgt_diskfile_is_name_unique( $t_string , $p_filepath ) )
     {
         $t_string = file_generate_unique_name( $p_seed );
     }
-    /*
-    do {
-        $t_string = file_generate_unique_name( $p_seed );
-    } while ( !plugins_releasemgt_diskfile_is_name_unique( $t_string , $p_filepath ) );
-    */
-
     return $t_string;
 }
 
@@ -317,11 +320,5 @@ echo "DBG: 0:0, $t_method, FTP<BR>\n";
  * @param type $p_redirect_to
  */
 function release_mgt_successful_redirect( $p_redirect_to ) {
-    //html_page_top( null, $p_redirect_to );
-    //echo '<br /><div class="center">';
-    //echo lang_get( 'operation_successful' ) . '<br />';
-    //print_bracket_link( $p_redirect_to, lang_get( 'proceed' ) );
-    //echo '</div>';
-    //html_page_bottom();
-    print_successful_redirect( plugin_page( 'config', true ) );
+    print_successful_redirect( plugin_page( $p_redirect_to, true ) );
 }

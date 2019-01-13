@@ -37,7 +37,6 @@ for( $i=0; $i<$t_file_count; $i++ ) {
     $t_file_id[$i] = plugins_releasemgt_file_add( $t_file[$i]['tmp_name'], $t_file[$i]['name'], $t_file[$i]['type'], $t_project_id, $t_version, $t_description[$i], $t_file_error[$i] );
 }
 
-$t_redirect_url = plugin_page( 'releases', true );
 if ( plugin_config_get( 'notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_ENABLE_DEFAULT ) == ON ) {
     $t_subject = plugin_config_get( 'email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT );
     $t_subject_replace = array( '*P' => '*p', '*C' => '*c', '*V' => '*v', '*p' => project_get_name( $t_project_id ), '*v' => version_get_field( $t_version, 'version' ), '*c' => $t_file_count, '**' => '*' );
@@ -164,4 +163,4 @@ if ( plugin_config_get( 'notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_E
     }
 }
 
-release_mgt_successful_redirect($t_redirect_url);
+release_mgt_successful_redirect( 'releases' );
