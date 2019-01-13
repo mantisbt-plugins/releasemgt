@@ -13,6 +13,7 @@
  */
 
 require_once( 'constant_api.php' );
+require_once( 'releasemgt_api.php' );
 
 auth_reauthenticate(  );
 access_ensure_global_level( config_get( 'manage_plugin_threshold' ) );
@@ -22,20 +23,20 @@ layout_page_header( plugin_lang_get( 'configuration_page_title' ) );
 layout_page_begin( 'manage_overview_page.php' );
 print_manage_menu( 'manage_plugin_page.php' );
 
-//html_page_top1( plugin_lang_get('configuration_page_title') );
-//html_page_top2( );
-//print_manage_menu( );
-
 $t_project_id = helper_get_current_project();
 
 ?>
 
 <br />
-<div align="center">
+<!-- div align="center" -->
 <?php
 
-  echo str_replace( '%%project%%', '<b>' . project_get_name( helper_get_current_project() ) . '</b>',plugin_lang_get( 'configuration_for_project' ) );
-
+  //echo str_replace( '%%project%%', '<b>' . project_get_name( helper_get_current_project() ) . '</b>',plugin_lang_get( 'configuration_for_project' ) );
+  releasemgt_plugin_section_title( 
+      str_replace( '%%project%%', '<b>' . project_get_name( helper_get_current_project() ) . '</b>', plugin_lang_get( 'configuration_for_project' ) ), 
+      'fa-file-o',
+      'releasemgt_config' 
+  );
 ?>
   <br /><br />
   <form name="plugins_releasemgt" method="post" action="<?php echo plugin_page( 'config_update' ) ?>">
@@ -43,7 +44,8 @@ $t_project_id = helper_get_current_project();
     <input type="hidden" name="action" value="update" />
     <input type="hidden" name="project_id" value="<?php echo $t_project_id ?>" />
     <input type="hidden" name="plugin" value="releasemgt" />
-    <table class="width75" cellspacing="1">
+<!--    <table class="width75" cellspacing="1"> -->
+    <table class="width100 table table-striped table-bordered table-condensed" cellspacing="1">
 
       <!-- Upload access level -->
       <tr <?php echo helper_alternate_class() ?>>
@@ -55,11 +57,6 @@ $t_project_id = helper_get_current_project();
             <?php print_enum_string_option_list( 'access_levels', plugin_config_get( 'upload_threshold_level', PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT ) ); ?>
           </select>
         </td>
-      </tr>
-
-      <!-- spacer -->
-      <tr>
-        <td class="spacer" colspan="2">&nbsp;</td>
       </tr>
 
       <!-- Download access level -->
@@ -91,6 +88,12 @@ $t_project_id = helper_get_current_project();
       <tr <?php echo helper_alternate_class() ?>>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'upload_method' ); ?>
+          <br /><span class="small">
+<?php
+        $t_max_size = releasemgt_max_upload_size();
+        echo lang_get( 'max_file_size_label' ) . ' '. number_format( $t_max_size[0]/1000 ) . '&nbsp;kB (limited by ' . plugin_lang_get( $t_max_size[1] ) . ')';
+?>
+          </span>
         </td>
         <td width="70%">
           <select name="upload_method">
@@ -111,10 +114,6 @@ $t_project_id = helper_get_current_project();
         </td>
       </tr>
 
-      <!-- spacer -->
-      <tr>
-        <td class="spacer" colspan="2">&nbsp;</td>
-      </tr>
 
       <!-- Disk parameter -->
       <tr <?php echo helper_alternate_class() ?>>
@@ -122,7 +121,7 @@ $t_project_id = helper_get_current_project();
           <span class="required">*</span><?php echo plugin_lang_get( 'disk_path' ); ?>
         </td>
         <td width="70%">
-          <input type="text" name="disk_dir" size="30" value="<?php echo plugin_config_get( 'disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT ); ?>" />
+          <input type="text" name="disk_dir" size="60" value="<?php echo plugin_config_get( 'disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT ); ?>" />
         </td>
       </tr>
 
@@ -208,7 +207,7 @@ $t_project_id = helper_get_current_project();
           <?php echo plugin_lang_get( 'notify_email' ); ?>
         </td>
         <td width="70%">
-          <textarea name="notify_email"><?php echo plugin_config_get( 'notify_email', PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT ) ?></textarea>
+          <textarea rows="2" cols="60" name="notify_email"><?php echo plugin_config_get( 'notify_email', PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT ) ?></textarea>
         </td>
       </tr>
 
@@ -223,7 +222,7 @@ $t_project_id = helper_get_current_project();
           <span class="required">*</span><?php echo plugin_lang_get( 'email_subject' ); ?> <?php //plugins_helplink_print_link( 'email_subject_help' ) ?>
         </td>
         <td width="70%">
-          <input type="text" name="email_subject" size="30" value="<?php echo plugin_config_get( 'email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT ); ?>" />
+          <input type="text" name="email_subject" size="60" value="<?php echo plugin_config_get( 'email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT ); ?>" />
         </td>
       </tr>
 
@@ -268,19 +267,18 @@ foreach( $t_dirs as $t_dir ) {
           <span class="required"> * <?php echo lang_get( 'required' ) ?></span>
         </td>
         <td class="center">
-          <input tabindex="4" type="submit" class="button" value="<?php echo lang_get( 'submit_button' ) ?>" />
-          <?php if ( $t_project_id != ALL_PROJECTS ) { ?><input type="button" class="button" value="<?php echo lang_get( 'revert_to_all_project' ) ?>" onclick="document.forms.plugins_releasemgt.action.value='delete';document.forms.plugins_releasemgt.submit();" /><?php } ?>
         </td>
       </tr>
 
     </table>
+          <input tabindex="4" type="submit" class="button" value="<?php echo lang_get( 'submit_button' ) ?>" />
+          <?php if ( $t_project_id != ALL_PROJECTS ) { ?><input type="button" class="button" value="<?php echo lang_get( 'revert_to_all_project' ) ?>" onclick="document.forms.plugins_releasemgt.action.value='delete';document.forms.plugins_releasemgt.submit();" /><?php } ?>
   </form>
 
+</div>
 </div>
 
 
 
-
 <?php
-//html_page_bottom1( );
-layout_page_end();
+    layout_page_end();

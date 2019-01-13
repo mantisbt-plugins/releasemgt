@@ -79,9 +79,9 @@ function releasemgt_plugin_release_title( $p_release_title, $p_release_version )
 
 }
 
-function releasemgt_plugin_upload_title( $p_title = 'Upload files' )
+function releasemgt_plugin_section_title( $p_title, $p_fa_icon, $p_block_id )
 {
-    $t_block_id = 'section_upload';
+    $t_block_id = $p_block_id;
     $t_collapse_block = is_collapsed( $t_block_id );
     $t_block_css = $t_collapse_block ? 'collapsed' : '';
     $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
@@ -90,7 +90,7 @@ function releasemgt_plugin_upload_title( $p_title = 'Upload files' )
     echo '<div id="' . $t_block_id . '" class="widget-box widget-color-blue2 ' . $t_block_css . '">';
     echo '<div class="widget-header widget-header-small">';
     echo '<h4 class="widget-title lighter">';
-    echo '<i class="ace-icon fa fa-upload"></i>';
+    echo '<i class="ace-icon fa ' . $p_fa_icon . '"></i>';
     echo $p_title, lang_get( 'word_separator' );
     echo '</h4>';
 //	echo '<div class="widget-toolbar">';
@@ -101,6 +101,26 @@ function releasemgt_plugin_upload_title( $p_title = 'Upload files' )
     echo '</div>';
     echo '</div>';
     echo '<div class="widget-main">';
+}
+
+function releasemgt_max_upload_size()
+{
+        $t_max_sizes = array( 
+            'max_file_ini_upload' => ini_get_number( 'upload_max_filesize' ),
+            'max_file_ini_post'   => ini_get_number( 'post_max_size' ),
+//            'max_file_mantis_cfg' => config_get( 'max_file_size' ),
+        );
+        $t_max_key = '';
+        $t_max_size = 0x7FFFFFFF;
+        foreach( $t_max_sizes as $key => $size )
+        {
+            if( $size < $t_max_size )
+            {
+                $t_max_size = $size;
+                $t_max_key  = $key;
+            }
+        }
+        return array( $t_max_size, $t_max_key );
 }
 
 

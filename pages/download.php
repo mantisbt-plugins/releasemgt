@@ -19,12 +19,11 @@
 $g_bypass_headers = true; # suppress headers as we will send our own later
 define( 'COMPRESSION_DISABLED', true );
 
-/*
-require_once( 'core.php' );
-require_once( 'bug_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'http_api.php' );
-*/
+// This page is called from direct link 
+// (i.e. not as a parameter of plugin.php
+// As the result it does not have include path
+// set approptiately and thus we use relative path
+// to core.php. Once core is loaded everething works fine
 require_once( '../../../core.php' );
 require_api( 'access_api.php' );
 require_api( 'authentication_api.php' );
@@ -37,15 +36,7 @@ require_api( 'gpc_api.php' );
 require_api( 'http_api.php' );
 require_api( 'utility_api.php' );
 
-error_log('DBG: start download');
-
 plugin_push_current( 'releasemgt' );
-
-error_log( 'DBG: $g_csp = "' . ($g_csp === null ? 'null' : $g_csp) . '"' );
-
-//html_page_top( plugin_lang_get( 'display_page_title' ) );
-//layout_page_header( plugin_lang_get( 'display_page_title' ) );
-//layout_page_begin();
 
 $t_id = gpc_get_int( 'id' );
 $c_file_id = db_prepare_int( $t_id );
@@ -158,5 +149,7 @@ switch ( plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DE
     echo $v_content;
 }
 ?>
+
+
 <?php
-//    layout_page_end();
+// No php close tag to avoid any extra output
