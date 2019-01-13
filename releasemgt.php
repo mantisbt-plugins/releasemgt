@@ -15,16 +15,16 @@
 class ReleasemgtPlugin extends MantisPlugin {
     function register() {
         $this->name = 'Release management';
-        $this->description = 'Adding possibility to attach file to released versions.';
+        $this->description = 'Adding possibility to attach files to released versions.';
         $this->page = 'config';
 
-        $this->version = '1.2.1';
+        $this->version = '2.0.0';
         $this->requires = array(
             'MantisCore' => '2.0.0',
             );
 
-        $this->author = 'Vincent DEBOUT, Jiri Hron';
-        $this->contact = 'jirka.hron@gmail.com';
+        $this->author = 'Vincent DEBOUT, Jiri Hron, Igor Kozin';
+        $this->contact = 'ikozin.src@gmail.com';
         $this->url = 'https://github.com/mantisbt-plugins/releasemgt';
     }
 
@@ -36,12 +36,12 @@ class ReleasemgtPlugin extends MantisPlugin {
 
     function hooks() {
             return array(
-                    'EVENT_MENU_MAIN'      => 'showdownload_menu'
+                    'EVENT_MENU_MAIN'        => 'showdownload_menu',
+                    'EVENT_LAYOUT_RESOURCES' => 'resources',
             );
     }
 
     function showdownload_menu() {
-            //return array( '<a href="' . plugin_page( 'releases' ) . '">' . plugin_lang_get( 'releases_link' ) . '</a>', );
             $t_page = plugin_page( 'releases', false, 'releasemgt' );
             $t_lang = plugin_lang_get( 'releases_link', 'releasemgt' );
             $t_menu_option = array(
@@ -52,15 +52,6 @@ class ReleasemgtPlugin extends MantisPlugin {
             );
             
             return array( $t_menu_option );
-            
-            /*
-<------><------><------>$t_menu_option = array(
-<------><------><------><------>'title' => $t_lang,
-<------><------><------><------>'url' => $t_page,
-<------><------><------><------>'access_level' => plugin_config_get( 'view_threshold' ),
-<------><------><------><------>'icon' => 'fa-search'
-<------><------><------>);
-            */
     }
 
     function schema() {
@@ -78,8 +69,18 @@ class ReleasemgtPlugin extends MantisPlugin {
                             file_type          C(250)  NOTNULL DEFAULT '',
                             date_added         T       NOTNULL DEFAULT '1970-01-01 00:00:01',
                             content            B       NOTNULL
-                            " )
-                    ),
+                            " ) ),
+                   // v.2.0.0
+		   array( 'AddColumnSQL', array( plugin_table( 'file' ), "
+			    enabled            L       NOTNULL DEFAULT 1
+			    ",
+			    array( "mysql" => "DEFAULT CHARSET=utf8" ) 
+			) ),
+		   array( 'AddColumnSQL', array( plugin_table( 'file' ), "
+			    release_type       L       NOTNULL DEFAULT 0
+			    ",
+			    array( "mysql" => "DEFAULT CHARSET=utf8" ) 
+			) ),
             );
     }
 
@@ -89,5 +90,8 @@ class ReleasemgtPlugin extends MantisPlugin {
 		);
 	}
 
+    function resources($event) {
+		return '<link rel="stylesheet" type="text/css" href="'.plugin_file("releasemgt.css").'"/>';
+	}
 
 }

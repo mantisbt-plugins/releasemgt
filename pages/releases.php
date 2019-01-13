@@ -29,7 +29,7 @@ require_once( 'bug_api.php' );
 require_once( 'releasemgt_api.php' );
 
 layout_page_header( plugin_lang_get( 'display_page_title' ) );
-layout_page_begin();
+layout_page_begin( plugin_page('releases') );
 
 $t_user_id = auth_get_current_user_id();
 $t_project_id = helper_get_current_project();
@@ -41,15 +41,21 @@ $t_user_has_upload_level = user_get_access_level( $t_user_id, $t_project_id ) >=
 
 releasemgt_plugin_page_title( string_display_line( $t_project_name ), plugin_lang_get( 'display_page_title' ) );
 
+echo '<div hidden title="' . plugin_lang_get( 'confirm_delete_file' ) . '" id="releasemgt_confirm_delete_file"></div>';
+echo '<div hidden title="' . plugin_lang_get( 'confirm_delete_version' ) . '" id="releasemgt_confirm_delete_version"></div>';
 foreach( $t_releases as $t_release ) {
     $t_prj_id = $t_release['project_id'];
     $t_project_name = project_get_field( $t_prj_id, 'name' );
     $t_release_title = string_display( $t_project_name ) . ' - ' . string_display( $t_release['version'] );
     
-    $t_query = 'SELECT id, title, filesize, description
+    $t_query = 'SELECT id, title, filesize, description, enabled, release_type
 		FROM ' . plugin_table('file') . '
-		WHERE project_id=' . db_param() . ' AND version_id=' . db_param() . '
-		ORDER BY title ASC';
+		WHERE project_id=' . db_param() . ' AND version_id=' . db_param();
+    if( !$t_user_has_upload_level )
+    {
+	$t_query .= ' AND enabled>0';
+    }
+    $t_query .= ' ORDER BY title ASC';
     $t_result = db_query_bound( $t_query, array( (int)$t_prj_id, (int)$t_release['id'] ) );
     
     if( db_num_rows( $t_result ) == 0 )
@@ -57,24 +63,28 @@ foreach( $t_releases as $t_release ) {
     
     releasemgt_plugin_release_title( $t_release_title, $t_release['version'] );
         
-    echo '<ul style="padding-left: 12px">';
+    echo '<ul style="padding-left: 12px;">';
     while( $t_row = db_fetch_array( $t_result ) ) {
-	$t_item_text = $t_row['description'];
-	if( $t_item_text != '' )
+	$t_item_prefix = $t_row['description'];
+	$t_item_postfix = '';
+	$t_item_text = $t_row['title'];
+	if( $t_item_prefix != '' )
 	{
-	    $t_item_text .= ' (' . $t_row['title'] . ')';
+	    $t_item_prefix .= ' (';
+	    $t_item_postfix = ')';
 	}
-	else
-	{
-	    $t_item_text = $row['title'];
-	}
-//        echo '<li> <a href="' . plugin_page( 'download' ) . '&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
-//        echo '<li> <a href="' . plugin_page( 'download' ) . '&cache_key=1&id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
-        echo '<li> <a href="' . releasemgt_plugin_page_url( 'download' ) . '?id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
-			. $t_item_text . '</a>';
+	$t_file_class = 'releasemgt-enabled-file';
+        if( $t_user_has_upload_level && $t_row['enabled']==0 ){
+	    $t_file_class = 'releasemgt-disabled-file';
+        }
+	
+        echo '<li style="padding-bottom: 6px;" class="' . $t_file_class . '">'  . $t_item_prefix . '<a class="' . $t_file_class . '"  href="' . releasemgt_plugin_page_url( 'download' ) . '?id=' . $t_row['id'] . '" title="' . plugin_lang_get( 'download_link' ) . '">'
+			. $t_row['title'] . '</a>' . $t_item_postfix;
 		echo ' - ' . size_display($t_row['filesize']);
         if ( $t_user_has_upload_level ) {
-            echo '&emsp; <a class="btn btn-xs btn-primary btn-white btn-round" href="' . plugin_page( 'delete' ) . '&id=' . $t_row['id'] . '" onclick="return confirm(\'Are you sure?\');" title=" ' . lang_get( 'delete_link' ) . '">' . lang_get( 'delete_link' ) . '</a>';
+            $t_enable_text =  plugin_lang_get( $t_row['enabled'] ? 'disable_link' : 'enable_link' );
+            echo '&emsp; <a class="btn btn-xs btn-primary btn-white btn-round releasemgt_enable" href="' . plugin_page( 'enable' ) . '&id=' . $t_row['id'] . '&enbl=' . ($t_row['enabled'] ? '0' : '1') . '" title=" ' . $t_enable_text . '">' . $t_enable_text . '</a>';
+            echo '&emsp; <a class="btn btn-xs btn-primary btn-white btn-round releasemgt_delete" href="' . plugin_page( 'delete' ) . '&id=' . $t_row['id'] . '" title=" ' . lang_get( 'delete_link' ) . '">' . lang_get( 'delete_link' ) . '</a>';
         }
     }
     echo '</ul>';
@@ -84,7 +94,6 @@ foreach( $t_releases as $t_release ) {
 if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
     $t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
     echo '<br /><hr />' . "\n";
-//    echo '<br /><span class="pagetitle">', plugin_lang_get( 'upload_title' ), '</span><br /><br />';
     releasemgt_plugin_upload_title( plugin_lang_get('upload_title') );
 ?>
 
