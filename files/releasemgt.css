@@ -4,3 +4,11 @@
 
 .releasemgt-enabled-file {
 }
+
+td.releasemgt-file-num {
+    font-weight: bold;
+}
+
+tr.releasemgt-odd-row {
+    background-color: #f9f9f9;
+}
