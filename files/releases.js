@@ -2,18 +2,18 @@
 
 function UpdateFileField() {
     var file_count = document.getElementById( 'file_count').value;
-    var inner = '';
-    //var innerDescription = '';
+    var inner = '<table width="100%">';
     
     for( var i=0; i<file_count; i++ ) {
-        if ( inner != '' ) {
-            inner += '<br /><br/>';
+        var cls = i % 2 == 0 ? 'releasemgt-odd-row' : '';
+        if ( i > 0  ) {
+            inner += '<tr class="'+cls+'"><td colspan="2">&nbsp;</td></tr>';
         }
-        inner += '<input name="file_' + i + '" type="file" size="40" />';
-        inner += '<textarea name="description_' + i + '" cols="80" rows="2" wrap="virtual"></textarea>'
+        inner += '<tr class="'+cls+'"><td class="releasemgt-file-num">#'+(i+1)+'&nbsp;</td><td> <input name="file_' + i + '" type="file" size="40" /> </td></tr>';
+        inner += '<tr class="'+cls+'"><td>&nbsp;</td><td> <textarea name="description_' + i + '" cols="80" rows="2" wrap="virtual"></textarea></td></tr>';
     }
+    inner += '</table>';
     document.getElementById( 'FileField' ).innerHTML = inner;
-    //document.getElementById( 'DescriptionField' ).innerHTML = innerDescription;
 }
 
 function ConfirmDelete(event)

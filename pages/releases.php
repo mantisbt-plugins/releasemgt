@@ -26,6 +26,7 @@ function size_display($bytes)
 
 require_once( 'core.php' );
 require_once( 'bug_api.php' );
+require_once( 'constant_api.php' );
 require_once( 'releasemgt_api.php' );
 
 layout_page_header( plugin_lang_get( 'display_page_title' ) );
@@ -35,6 +36,12 @@ $t_user_id = auth_get_current_user_id();
 $t_project_id = helper_get_current_project();
 
 $t_releases = version_get_all_rows( $t_project_id, 1 );
+$t_common = array( 'id' => 0, 'project_id' => $t_project_id, 
+    'version' => 'Common files', 
+    'description' => 'Files without relese specified', 
+    'released' => 1, 'obsolete' => 0,'date_order' => 0x7FFFFFFF);
+array_push( $t_releases, $t_common );
+
 $t_project_name = project_get_name( $t_project_id );
 
 $t_user_has_upload_level = user_get_access_level( $t_user_id, $t_project_id ) >= plugin_config_get( 'upload_threshold_level', PLUGINS_RELEASEMGT_UPLOAD_THRESHOLD_LEVEL_DEFAULT );
@@ -131,20 +138,41 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
     </tr>
     <tr class="row-1">
       <td class="category" width="15%">
-        <span class="required">*</span><?php echo lang_get( 'select_file' ) ?><br />
+        <span class="required">*</span><?php echo lang_get( 'select_files' ) ?><br />
         <?php echo '<span class="small">(' . lang_get( 'max_file_size_label' ) . ' ' . number_format( $t_max_file_size/1000 ) . 'kB)</span>'?>
       </td>
       <td width="85%">
-        <div id="FileField"></div>
-      </td>
-    </tr>
-    <tr class="row-2">
-      <td class="category" width="15%">
-        <?php echo lang_get( 'description' ) ?>
-      </td>
-      <td width="85%">
-        <div id="DescriptionField">
-        </div>
+<?php
+        // Check if plugin properly configured
+        $t_cfgOk = true;
+        $t_method = plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT );
+        $t_cfg_err;
+        switch ( $t_method ) {
+          //case FTP:
+          case DISK:
+            $t_disk_dir = plugin_config_get( 'disk_dir', PLUGINS_RELEASEMGT_DISK_DIR_DEFAULT );
+            if( empty($t_disk_dir) ){
+                $t_cfgOk = false;
+                $t_cfg_err = 'File disk directory is not configured';
+            }
+            else if( !is_dir( $t_disk_dir ) ){
+                $t_cfgOk = false;
+                $t_cfg_err = 'File disk directory "' . $t_disk_dir . '" does not exist';
+            }
+            break;
+          case DATABASE:
+            break;
+        }
+
+        if( $t_cfgOk ){
+            echo '<div id="FileField"></div>';
+        } else {
+            echo '<div style="color:red">';
+            echo 'Invalid plugin configuration:<br>';
+            echo $t_cfg_err;
+            echo '</div>';
+        }
+?>
       </td>
     </tr>
     <tr>
@@ -155,11 +183,21 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
       </td>
     </tr>
   </table>
-  <input type="submit" class="button" value="<?php echo lang_get( 'upload_files_button' ) ?>" />
+  
+<?php
+  if( $t_cfgOk ){
+?>
+  <input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get( 'upload_files_button' ) ?>" />
+<!--  <input type="submit" class="button" value="<?php echo lang_get( 'upload_files_button' ) ?>" /> -->
   <script src="<?php echo plugin_file( 'releases.js' ) ?>"></script>  
+<?php
+}
+?>
 </form>
 <?php
-    echo "</div>\n";
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
 }
 
 ?>
