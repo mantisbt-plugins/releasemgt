@@ -18,7 +18,7 @@ class ReleasemgtPlugin extends MantisPlugin {
         $this->description = 'Adding possibility to attach files to released versions.';
         $this->page = 'config';
 
-        $this->version = '2.0.1';
+        $this->version = '2.0.2';
         $this->requires = array(
             'MantisCore' => '2.0.0',
             );
@@ -50,7 +50,7 @@ class ReleasemgtPlugin extends MantisPlugin {
                 'access_level' => plugin_config_get( 'view_threshold' ),
                 'icon' => 'fa-download'
             );
-            
+
             return array( $t_menu_option );
     }
 
@@ -71,27 +71,28 @@ class ReleasemgtPlugin extends MantisPlugin {
                             content            B       NOTNULL
                             " ) ),
                    // v.2.0.0
-		   array( 'AddColumnSQL', array( plugin_table( 'file' ), "
-			    enabled            L       NOTNULL DEFAULT 1
-			    ",
-			    array( "mysql" => "DEFAULT CHARSET=utf8" ) 
-			) ),
-		   array( 'AddColumnSQL', array( plugin_table( 'file' ), "
-			    release_type       L       NOTNULL DEFAULT 0
-			    ",
-			    array( "mysql" => "DEFAULT CHARSET=utf8" ) 
-			) ),
+                   array( 'AddColumnSQL', array( plugin_table( 'file' ), "
+                            enabled            L       NOTNULL DEFAULT 1
+                            ",
+                            array( "mysql" => "DEFAULT CHARSET=utf8" )
+                        ) ),
+                   array( 'AddColumnSQL', array( plugin_table( 'file' ), "
+                            release_type       L       NOTNULL DEFAULT 0
+                            ",
+                            array( "mysql" => "DEFAULT CHARSET=utf8" )
+                        ) ),
             );
     }
 
     function config() {
-		return array(
-			'download_requires_login'   => true
-		);
-	}
+                return array(
+                        'download_requires_login'   => true,
+                        'view_threshold' => ADMINISTRATOR,
+                );
+        }
 
     function resources($event) {
-		return '<link rel="stylesheet" type="text/css" href="'.plugin_file("releasemgt.css").'"/>';
-	}
+                return '<link rel="stylesheet" type="text/css" href="'.plugin_file("releasemgt.css").'"/>';
+        }
 
 }

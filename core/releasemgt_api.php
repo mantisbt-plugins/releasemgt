@@ -12,6 +12,7 @@
  * @author Jiri Hron <jirka.hron@gmail.com>
  */
 
+require_once( 'constant_api.php' );
 require_once( 'file_api.php' );
 
 function releasemgt_plugin_page_path( $p_page_name )
@@ -50,32 +51,32 @@ function releasemgt_plugin_release_title( $p_release_title, $p_release_version )
     echo '<i class="ace-icon fa fa-retweet"></i>';
     echo $p_release_title, lang_get( 'word_separator' );
     echo '</h4>';
-//	echo '<div class="widget-toolbar">';
-//	echo '<a data-action="collapse" href="#">';
-//	echo '<i class="1 ace-icon fa ' . $t_block_icon . ' bigger-125"></i>';
-//	echo '</a>';
-//	echo '</div>';
+//      echo '<div class="widget-toolbar">';
+//      echo '<a data-action="collapse" href="#">';
+//      echo '<i class="1 ace-icon fa ' . $t_block_icon . ' bigger-125"></i>';
+//      echo '</a>';
+//      echo '</div>';
     echo '</div>';
     echo '</div>';
-    
-/*
-	echo '<div class="widget-body">';
-	echo '<div class="widget-toolbox padding-8 clearfix">';
-	echo '<div class="pull-left"><i class="fa fa-calendar-o fa-lg"> </i> ' . $t_release_date . '</div>';
-	echo '<div class="btn-toolbar pull-right">';
-	echo '<a class="btn btn-xs btn-primary btn-white btn-round" ';
-	echo 'href="view_all_set.php?type=1&temporary=y&' . FILTER_PROPERTY_PROJECT_ID . '=' . $t_project_id .
-		 '&' . filter_encode_field_and_value( FILTER_PROPERTY_FIXED_IN_VERSION, $t_version_name ) .
-		 '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . META_FILTER_NONE . '">';
-	echo lang_get( 'view_bugs_link' );
-	echo '<a class="btn btn-xs btn-primary btn-white btn-round" href="changelog_page.php?version_id=' . $p_version_id . '">' . string_display_line( $t_version_name ) . '</a>';
-	echo '<a class="btn btn-xs btn-primary btn-white btn-round" href="changelog_page.php?project_id=' . $t_project_id . '">' . string_display_line( $t_project_name ) . '</a>';
-	echo '</a>';
-	echo '</div>';
 
-	echo '</div>';
+/*
+        echo '<div class="widget-body">';
+        echo '<div class="widget-toolbox padding-8 clearfix">';
+        echo '<div class="pull-left"><i class="fa fa-calendar-o fa-lg"> </i> ' . $t_release_date . '</div>';
+        echo '<div class="btn-toolbar pull-right">';
+        echo '<a class="btn btn-xs btn-primary btn-white btn-round" ';
+        echo 'href="view_all_set.php?type=1&temporary=y&' . FILTER_PROPERTY_PROJECT_ID . '=' . $t_project_id .
+                 '&' . filter_encode_field_and_value( FILTER_PROPERTY_FIXED_IN_VERSION, $t_version_name ) .
+                 '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . META_FILTER_NONE . '">';
+        echo lang_get( 'view_bugs_link' );
+        echo '<a class="btn btn-xs btn-primary btn-white btn-round" href="changelog_page.php?version_id=' . $p_version_id . '">' . string_display_line( $t_version_name ) . '</a>';
+        echo '<a class="btn btn-xs btn-primary btn-white btn-round" href="changelog_page.php?project_id=' . $t_project_id . '">' . string_display_line( $t_project_name ) . '</a>';
+        echo '</a>';
+        echo '</div>';
+
+        echo '</div>';
 */
-	echo '<div class="widget-main">';
+        echo '<div class="widget-main">';
 
 }
 
@@ -93,11 +94,11 @@ function releasemgt_plugin_section_title( $p_title, $p_fa_icon, $p_block_id )
     echo '<i class="ace-icon fa ' . $p_fa_icon . '"></i>';
     echo $p_title, lang_get( 'word_separator' );
     echo '</h4>';
-//	echo '<div class="widget-toolbar">';
-//	echo '<a data-action="collapse" href="#">';
-//	echo '<i class="1 ace-icon fa ' . $t_block_icon . ' bigger-125"></i>';
-//	echo '</a>';
-//	echo '</div>';
+//      echo '<div class="widget-toolbar">';
+//      echo '<a data-action="collapse" href="#">';
+//      echo '<i class="1 ace-icon fa ' . $t_block_icon . ' bigger-125"></i>';
+//      echo '</a>';
+//      echo '</div>';
     echo '</div>';
     echo '</div>';
     echo '<div class="widget-main">';
@@ -105,7 +106,7 @@ function releasemgt_plugin_section_title( $p_title, $p_fa_icon, $p_block_id )
 
 function releasemgt_max_upload_size()
 {
-        $t_max_sizes = array( 
+        $t_max_sizes = array(
             'max_file_ini_upload' => ini_get_number( 'upload_max_filesize' ),
             'max_file_ini_post'   => ini_get_number( 'post_max_size' ),
 //            'max_file_mantis_cfg' => config_get( 'max_file_size' ),
@@ -144,8 +145,8 @@ function plugins_releasemgt_file_get_field( $p_file_id, $p_field_name ) {
     $t_file_table = plugin_table('file');
 
     $query = "SELECT $c_field_name
-				  FROM $t_file_table
-				  WHERE id=" . db_param();
+                                  FROM $t_file_table
+                                  WHERE id=" . db_param();
     $result = db_query_bound( $query, array( (int)$p_file_id ), 1 );
 
     return db_result( $result );
@@ -173,7 +174,7 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
 
     $t_file_table = plugin_table ( 'file' );
     $query = "DELETE FROM $t_file_table
-				WHERE id=" . db_param();
+                                WHERE id=" . db_param();
     $result = db_query_bound( $query, array( (int)$p_file_id ), 1 );
     return true;
 }
@@ -181,8 +182,8 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
 function plugins_releasemgt_file_enable( $p_file_id, $p_enable ) {
     $t_file_table = plugin_table ( 'file' );
     $query = "UPDATE $t_file_table"
-	   . ' SET enabled=' . db_param()
-	   . ' WHERE id=' . db_param();
+           . ' SET enabled=' . db_param()
+           . ' WHERE id=' . db_param();
     $result = db_query_bound( $query, array( (int)($p_enable ? 1 : 0), (int)$p_file_id, ), 1 );
     return true;
 }
@@ -202,8 +203,8 @@ function plugins_releasemgt_diskfile_is_name_unique( $p_name, $p_filepath ) {
     $c_name = db_prepare_string( $p_filepath . $p_name );
 
     $query = "SELECT COUNT(*)
-				  FROM $t_file_table
-				  WHERE diskfile=" . db_param();
+                                  FROM $t_file_table
+                                  WHERE diskfile=" . db_param();
     $result = db_query_bound( $query, array( $c_name ) );
     $t_count = db_result( $result );
 
@@ -218,8 +219,8 @@ function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_vers
     $c_version_id = db_prepare_int( $p_version_id );
 
     $query = "SELECT COUNT(*)
-				  FROM $t_file_table
-				  WHERE filename=" . db_param() . " AND project_id=" . db_param() . " AND version_id=" . db_param();
+                                  FROM $t_file_table
+                                  WHERE filename=" . db_param() . " AND project_id=" . db_param() . " AND version_id=" . db_param();
     $result = db_query_bound( $query, array( $c_name, (int)$p_project_id, (int)$p_version_id ) );
     $t_count = db_result( $result );
 
@@ -318,18 +319,18 @@ echo "DBG: 0:0, $t_method, FTP<BR>\n";
 
     $t_file_table = plugin_table ( 'file' );
     $query = "INSERT INTO $t_file_table
-				(project_id, version_id, title, description, 
-				 diskfile, filename, folder, filesize, 
-				 file_type, date_added, content)
-			  VALUES
-				(" . db_param() . ", " . db_param() . ", " . db_param() . ", " . db_param() . ", 
-				 " . db_param() . ", " . db_param() . ", " . db_param() . ", " . db_param() . ", 
-				 " . db_param() . ", " . db_param() . ", " . db_param() . ")";
-	$param = array(
-		(int)$p_project_id, (int)$p_version_id, $c_title, $c_desc, $c_disk_file_name,
-		$c_new_file_name, $c_file_path, (int)$t_file_size, $c_file_type, date("Y-m-d H:i:s"),
-		$c_content
-	);
+                                (project_id, version_id, title, description,
+                                 diskfile, filename, folder, filesize,
+                                 file_type, date_added, content)
+                          VALUES
+                                (" . db_param() . ", " . db_param() . ", " . db_param() . ", " . db_param() . ",
+                                 " . db_param() . ", " . db_param() . ", " . db_param() . ", " . db_param() . ",
+                                 " . db_param() . ", " . db_param() . ", " . db_param() . ")";
+        $param = array(
+                (int)$p_project_id, (int)$p_version_id, $c_title, $c_desc, $c_disk_file_name,
+                $c_new_file_name, $c_file_path, (int)$t_file_size, $c_file_type, date("Y-m-d H:i:s"),
+                $c_content
+        );
     db_query_bound( $query, $param );
     $t_file_id = db_insert_id();
     return $t_file_id;

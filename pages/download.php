@@ -19,7 +19,7 @@
 $g_bypass_headers = true; # suppress headers as we will send our own later
 define( 'COMPRESSION_DISABLED', true );
 
-// This page is called from direct link 
+// This page is called from direct link
 // (i.e. not as a parameter of plugin.php
 // As the result it does not have include path
 // set approptiately and thus we use relative path
@@ -44,16 +44,17 @@ $c_file_id = db_prepare_int( $t_id );
 $t_file_table = plugin_table('file');
 
 $query = "SELECT *
-			  FROM $t_file_table
-			  WHERE id=" . db_param();
+                          FROM $t_file_table
+                          WHERE id=" . db_param();
 $result = db_query_bound( $query, array( (int)$t_id ) );
 $row = db_fetch_array( $result );
 
-//error_log( "DBG: 1" );
+// For debug only
+//error_log( "DBG: enter download" );
+
 if (!$row){
     trigger_error( ERROR_FILE_NOT_FOUND, ERROR );
 }
-//error_log( "DBG: 2" );
 
 extract( $row, EXTR_PREFIX_ALL, 'v' );
 
@@ -62,23 +63,19 @@ $require_login = (bool) plugin_config_get('download_requires_login', null, false
 if ($require_login)
 {
 // To ensure that only logged user will be able to download file:
-	$t_current_user_id = auth_get_current_user_id();
+        $t_current_user_id = auth_get_current_user_id();
 // To ensure that the user will be able to download file only if he/she has at least REPORTER rights to the project:
-	access_ensure_project_level( REPORTER, $v_project_id, $t_current_user_id );
+        access_ensure_project_level( REPORTER, $v_project_id, $t_current_user_id );
 }
-error_log( 'DBG: 1' );
 
 # throw away output buffer contents (and disable it) to protect download
 while ( @ob_end_clean() );
-error_log( 'DBG: ob_end_clean' );
 
 if ( ini_get( 'zlib.output_compression' ) && function_exists( 'ini_set' ) ) {
         ini_set( 'zlib.output_compression', false );
 }
-error_log( 'DBG: zlib done' );
 
 http_security_headers();
-error_log( 'DBG: http_security_headers' );
 
 # Make sure that IE can download the attachments under https.
 header( 'Pragma: public' );
@@ -96,10 +93,9 @@ if ( ( isset( $_SERVER["HTTPS"] ) && ( "on" == utf8_strtolower( $_SERVER["HTTPS"
 }
 header( 'Expires: ' . gmdate( 'D, d M Y H:i:s \G\M\T', time() ) );
 
-header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s \G\M\T', $v_date_added ) );
+header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s \G\M\T', strtotime($v_date_added) ) );
 
 $t_filename = file_get_display_name( $v_filename );
-error_log( 'DBG: $t_filename' . $t_filename );
 
 # For Internet Explorer 8 as per http://blogs.msdn.com/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx
 # Don't let IE second guess our content-type!
@@ -125,7 +121,8 @@ header( 'Content-Length: ' . $v_filesize );
 
 header( 'Content-Type: ' . $v_file_type );
 
-error_log( "DBG: just before download" );
+// For debug only
+//error_log( "DBG: just before download" );
 
 switch ( plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT ) ) {
   case DISK:
