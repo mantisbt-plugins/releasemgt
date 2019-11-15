@@ -1,0 +1,19 @@
+# Direct access to entire plugins
+# directory protected by .htaccess
+# in the roo plugin.
+#
+# However, we need here explicit access
+# to download.php - it called directly
+# to workaround HTTP header issue
+#
+<Files download.php>
+# Apache 2.4
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+# Apache 2.2
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        allow from all
+    </IfModule>
+</Files>
