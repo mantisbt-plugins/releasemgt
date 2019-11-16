@@ -12,12 +12,18 @@ email is sent to the developer during the file upload.
   * Email templates
   * Easy to install.
 
-
 ## Requirements
 
   * MantisBT 2.x
   * See [master-1-2-x branch](https://github.com/mantisbt-plugins/releasemgt/tree/master-1-2-x) for the Mantis 1.2 version.
-  
+
+## Known issues/limitations
+
+  * Only 'DISK' option for the file storage is supported (FTP and DATABASE are not)
+  * For 'download' to work properly permission should allow HTTP server to run releasemgt/pages/download.php directly. If you getting error 403 (Forbidden) make sure HTTP server configured properly. See [#12][i12]
+
+[i12]: https://github.com/mantisbt-plugins/releasemgt/issues/12
+
 ## Tested 
 
   * MantisBT 2.19.0
