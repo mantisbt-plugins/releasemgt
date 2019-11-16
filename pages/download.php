@@ -36,6 +36,8 @@ require_api( 'gpc_api.php' );
 require_api( 'http_api.php' );
 require_api( 'utility_api.php' );
 
+require_once('../core/constant_api.php' );
+
 plugin_push_current( 'releasemgt' );
 
 $t_id = gpc_get_int( 'id' );
