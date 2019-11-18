@@ -332,7 +332,7 @@ echo "DBG: 0:0, $t_method, FTP<BR>\n";
                 $c_content
         );
     db_query_bound( $query, $param );
-    $t_file_id = db_insert_id();
+    $t_file_id = db_insert_id( $t_file_table );
     return $t_file_id;
 }
 
