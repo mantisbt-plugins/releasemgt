@@ -95,7 +95,7 @@ function releasemgt_plugin_send_email( $p_project_id, $p_version, $p_files, $p_d
         } else {
 			$c_version = version_get_field( $p_version, 'version' );
         }
-        $t_result = db_query_bound( $t_query, array( (int)$p_project_id, db_prepare_string( $c_version ) ) );
+        $t_result = db_query( $t_query, array( (int)$p_project_id, db_prepare_string( $c_version ) ) );
         while( $t_row = db_fetch_array( $t_result ) ) {
             $t_id_list[] = $t_row['reporter_id'];
         }

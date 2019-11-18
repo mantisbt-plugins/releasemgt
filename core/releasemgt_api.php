@@ -147,7 +147,7 @@ function plugins_releasemgt_file_get_field( $p_file_id, $p_field_name ) {
     $query = "SELECT $c_field_name
                                   FROM $t_file_table
                                   WHERE id=" . db_param();
-    $result = db_query_bound( $query, array( (int)$p_file_id ), 1 );
+    $result = db_query( $query, array( (int)$p_file_id ), 1 );
 
     return db_result( $result );
 }
@@ -175,7 +175,7 @@ function plugins_releasemgt_file_delete( $p_file_id ) {
     $t_file_table = plugin_table ( 'file' );
     $query = "DELETE FROM $t_file_table
                                 WHERE id=" . db_param();
-    $result = db_query_bound( $query, array( (int)$p_file_id ), 1 );
+    $result = db_query( $query, array( (int)$p_file_id ), 1 );
     return true;
 }
 
@@ -184,7 +184,7 @@ function plugins_releasemgt_file_enable( $p_file_id, $p_enable ) {
     $query = "UPDATE $t_file_table"
            . ' SET enabled=' . db_param()
            . ' WHERE id=' . db_param();
-    $result = db_query_bound( $query, array( (int)($p_enable ? 1 : 0), (int)$p_file_id, ), 1 );
+    $result = db_query( $query, array( (int)($p_enable ? 1 : 0), (int)$p_file_id, ), 1 );
     return true;
 }
 
@@ -205,7 +205,7 @@ function plugins_releasemgt_diskfile_is_name_unique( $p_name, $p_filepath ) {
     $query = "SELECT COUNT(*)
                                   FROM $t_file_table
                                   WHERE diskfile=" . db_param();
-    $result = db_query_bound( $query, array( $c_name ) );
+    $result = db_query( $query, array( $c_name ) );
     $t_count = db_result( $result );
 
     return $t_count < 1;
@@ -221,7 +221,7 @@ function plugins_releasemgt_file_is_name_unique( $p_name, $p_project_id, $p_vers
     $query = "SELECT COUNT(*)
                                   FROM $t_file_table
                                   WHERE filename=" . db_param() . " AND project_id=" . db_param() . " AND version_id=" . db_param();
-    $result = db_query_bound( $query, array( $c_name, (int)$p_project_id, (int)$p_version_id ) );
+    $result = db_query( $query, array( $c_name, (int)$p_project_id, (int)$p_version_id ) );
     $t_count = db_result( $result );
 
     return $t_count < 1;
@@ -331,7 +331,7 @@ echo "DBG: 0:0, $t_method, FTP<BR>\n";
                 $c_new_file_name, $c_file_path, (int)$t_file_size, $c_file_type, date("Y-m-d H:i:s"),
                 $c_content
         );
-    db_query_bound( $query, $param );
+    db_query( $query, $param );
     $t_file_id = db_insert_id( $t_file_table );
     return $t_file_id;
 }

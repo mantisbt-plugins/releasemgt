@@ -63,7 +63,7 @@ foreach( $t_releases as $t_release ) {
 	$t_query .= ' AND enabled>0';
     }
     $t_query .= ' ORDER BY title ASC';
-    $t_result = db_query_bound( $t_query, array( (int)$t_prj_id, (int)$t_release['id'] ) );
+    $t_result = db_query( $t_query, array( (int)$t_prj_id, (int)$t_release['id'] ) );
     
     if( db_num_rows( $t_result ) == 0 )
         continue;

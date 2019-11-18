@@ -48,7 +48,7 @@ $t_file_table = plugin_table('file');
 $query = "SELECT *
                           FROM $t_file_table
                           WHERE id=" . db_param();
-$result = db_query_bound( $query, array( (int)$t_id ) );
+$result = db_query( $query, array( (int)$t_id ) );
 $row = db_fetch_array( $result );
 
 // For debug only
