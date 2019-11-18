@@ -48,7 +48,7 @@ $t_project_id = helper_get_current_project();
     <table class="width100 table table-striped table-bordered table-condensed" cellspacing="1">
 
       <!-- Upload access level -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'upload_access_level' ); ?>
         </td>
@@ -60,7 +60,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- Download access level -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'download_requires_login' ); ?>
         </td>
@@ -75,7 +75,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- file number -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'file_count' ); ?>
         </td>
@@ -85,7 +85,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- Upload method -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'upload_method' ); ?>
           <br /><span class="small">
@@ -116,7 +116,7 @@ $t_project_id = helper_get_current_project();
 
 
       <!-- Disk parameter -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'disk_path' ); ?>
         </td>
@@ -134,7 +134,7 @@ $t_project_id = helper_get_current_project();
       /**
        * @todo FTP file storage is not yet converted - so function is disabled
       <!-- FTP parameters: server -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'ftp_server' ); ?>
         </td>
@@ -144,7 +144,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- FTP parameters: user -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'ftp_user' ); ?>
         </td>
@@ -154,7 +154,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- FTP parameters: pass -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'ftp_pass' ); ?>
         </td>
@@ -172,7 +172,7 @@ $t_project_id = helper_get_current_project();
       ?>
 
       <!-- Notification enable -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <?php echo plugin_lang_get( 'notification_enable' ); ?>
         </td>
@@ -182,7 +182,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- Notify handler -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <?php echo plugin_lang_get( 'notify_handler' ); ?>
         </td>
@@ -192,7 +192,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- Notify reporter -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <?php echo plugin_lang_get( 'notify_reporter' ); ?>
         </td>
@@ -202,7 +202,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- Notify email -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <?php echo plugin_lang_get( 'notify_email' ); ?>
         </td>
@@ -217,7 +217,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- Email subject -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'email_subject' ); ?> <?php //plugins_helplink_print_link( 'email_subject_help' ) ?>
         </td>
@@ -227,7 +227,7 @@ $t_project_id = helper_get_current_project();
       </tr>
 
       <!-- Email template -->
-      <tr <?php echo helper_alternate_class() ?>>
+      <tr>
         <td class="category" width="30%">
           <span class="required">*</span><?php echo plugin_lang_get( 'email_template' ); ?>
         </td>
