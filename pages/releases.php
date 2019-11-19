@@ -52,7 +52,6 @@ echo '<div hidden title="' . plugin_lang_get( 'confirm_delete_file' ) . '" id="r
 echo '<div hidden title="' . plugin_lang_get( 'confirm_delete_version' ) . '" id="releasemgt_confirm_delete_version"></div>';
 foreach( $t_releases as $t_release ) {
     $t_prj_id = $t_release['project_id'];
-    $t_project_name = project_get_field( $t_prj_id, 'name' );
     $t_release_title = string_display( $t_project_name ) . ' - ' . string_display( $t_release['version'] );
     
     $t_query = 'SELECT id, title, filesize, description, enabled, release_type
@@ -195,7 +194,6 @@ if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
 ?>
 </form>
 <?php
-    echo '</div>';
     echo '</div>';
     echo '</div>';
 }
