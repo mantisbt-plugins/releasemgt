@@ -12,6 +12,7 @@
  * @author Jiri Hron <jirka.hron@gmail.com>
  */
 
+require_once( 'constant_api.php' );
 
 function releasemgt_plugin_send_email( $p_project_id, $p_version, $p_files, $p_descriptions, $p_files_id )
 {
