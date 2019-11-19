@@ -153,7 +153,7 @@ function plugins_releasemgt_file_get_field( $p_file_id, $p_field_name ) {
 }
 
 function plugins_releasemgt_file_delete( $p_file_id ) {
-    $t_upload_method = plugin_config_get( 'upload_method', UPLOAD_METHOD_DEFAULT );
+    $t_upload_method = plugin_config_get( 'upload_method', PLUGINS_RELEASEMGT_UPLOAD_METHOD_DEFAULT );
 
     $t_filename = plugins_releasemgt_file_get_field( $p_file_id, 'filename' );
     $t_diskfile = plugins_releasemgt_file_get_field( $p_file_id, 'diskfile' );
