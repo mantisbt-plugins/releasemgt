@@ -19,6 +19,9 @@ $s_plugin_releasemgt_releases_link = 'Releases';
 $s_plugin_releasemgt_display_page_title = 'Release downloads';
 $s_plugin_releasemgt_upload_title = 'Upload file(s)';
 $s_plugin_releasemgt_file_count = 'Number of files to upload';
+$s_plugin_releasemgt_no_release_version_name = 'Common files';
+$s_plugin_releasemgt_no_release_version_description = 'Files without relese specified';
+
 
 /* Configuration page */
 

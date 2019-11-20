@@ -22,7 +22,10 @@ function releasemgt_plugin_send_email( $p_project_id, $p_version, $p_files, $p_d
 
     $p_files_count = count( $p_files );
     $t_subject = plugin_config_get( 'email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT );
-    $t_subject_replace = array( '*P' => '*p', '*C' => '*c', '*V' => '*v', '*p' => project_get_name( $p_project_id ), '*v' => version_get_field( $p_version, 'version' ), '*c' => $p_files_count, '**' => '*' );
+    $t_subject_replace = array( '*P' => '*p', '*C' => '*c', '*V' => '*v', 
+        '*p' => project_get_name( $p_project_id ), 
+        '*v' => ($p_version == PLUGINS_RELEASEMGT_NO_RELEASE_VERSION ? plugin_lang_get( 'no_release_version_name' ) : version_get_field( $p_version, 'version' )), 
+        '*c' => $p_files_count, '**' => '*' );
     foreach( $t_subject_replace as $t_key => $t_value ) {
         $t_subject = str_replace( $t_key, $t_value, $t_subject );
     }

@@ -36,9 +36,9 @@ $t_user_id = auth_get_current_user_id();
 $t_project_id = helper_get_current_project();
 
 $t_releases = version_get_all_rows( $t_project_id, 1 );
-$t_common = array( 'id' => 0, 'project_id' => $t_project_id, 
-    'version' => 'Common files', 
-    'description' => 'Files without relese specified', 
+$t_common = array( 'id' => PLUGINS_RELEASEMGT_NO_RELEASE_VERSION, 'project_id' => $t_project_id, 
+    'version' => plugin_lang_get( 'no_release_version_name' ), 
+    'description' => plugin_lang_get( 'no_release_version_description' ), 
     'released' => 1, 'obsolete' => 0,'date_order' => 0x7FFFFFFF);
 array_push( $t_releases, $t_common );
 
