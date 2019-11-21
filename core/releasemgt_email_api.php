@@ -20,6 +20,46 @@ function releasemgt_plugin_send_email( $p_project_id, $p_version, $p_files, $p_d
     if ( plugin_config_get( 'notification_enable', PLUGINS_RELEASEMGT_NOTIFICATION_ENABLE_DEFAULT ) != ON )
 	return;
 
+    $t_id_list = array();
+    if ( plugin_config_get( 'notify_handler', PLUGINS_RELEASEMGT_NOTIFY_HANDLER_DEFAULT ) == ON ) {
+        $t_user_list = project_get_all_user_rows( $p_project_id, config_get( 'handle_bug_threshold' ) );
+        foreach( $t_user_list as $t_user ) {
+            $t_id_list[] = $t_user['id'];
+        }
+    }
+    // Get reporter
+    if ( plugin_config_get( 'notify_reporter', PLUGINS_RELEASEMGT_NOTIFY_REPORTER_DEFAULT ) == ON ) {
+		$t_query = 'SELECT reporter_id
+			FROM ' . db_get_table( 'mantis_bug_table' ) . '
+			WHERE project_id=' . db_param() . ' AND fixed_in_version=' . db_param();
+        if ( $p_version == 0 ) {
+			$c_version = '';
+        } else {
+			$c_version = version_get_field( $p_version, 'version' );
+        }
+        $t_result = db_query( $t_query, array( (int)$p_project_id, db_prepare_string( $c_version ) ) );
+        while( $t_row = db_fetch_array( $t_result ) ) {
+            $t_id_list[] = $t_row['reporter_id'];
+        }
+    }
+    for( $i=0; $i<count( $t_id_list ); $i++ ) {
+        $t_id_list[$i] = user_get_email( $t_id_list[$i] );
+    }
+
+    // Add users
+    $t_emails = explode( ',', plugin_config_get( 'notify_email', PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT ) );
+    foreach( $t_emails as $t_email ) {
+        if ( trim( $t_email ) != '' ) {
+            $t_id_list[] = trim( $t_email );
+        }
+    }
+    $t_email_ids = array_unique( $t_id_list );
+
+    if( count( $t_email_ids ) == 0 || (count( $t_email_ids ) == 1 &&  empty($t_email_ids[0])) ){
+        // No qulified e-mail addresses found for this notification -> nothing to send
+        return;
+    }
+
     $p_files_count = count( $p_files );
     $t_subject = plugin_config_get( 'email_subject', PLUGINS_RELEASEMGT_EMAIL_SUBJECT_DEFAULT );
     $t_subject_replace = array( '*P' => '*p', '*C' => '*c', '*V' => '*v', 
@@ -82,41 +122,6 @@ function releasemgt_plugin_send_email( $p_project_id, $p_version, $p_files, $p_d
     $t_html_message = ob_get_contents();
     ob_end_clean();
 
-    $t_id_list = array();
-    if ( plugin_config_get( 'notify_handler', PLUGINS_RELEASEMGT_NOTIFY_HANDLER_DEFAULT ) == ON ) {
-        $t_user_list = project_get_all_user_rows( $p_project_id, config_get( 'handle_bug_threshold' ) );
-        foreach( $t_user_list as $t_user ) {
-            $t_id_list[] = $t_user['id'];
-        }
-    }
-    // Get reporter
-    if ( plugin_config_get( 'notify_reporter', PLUGINS_RELEASEMGT_NOTIFY_REPORTER_DEFAULT ) == ON ) {
-		$t_query = 'SELECT reporter_id
-			FROM ' . db_get_table( 'mantis_bug_table' ) . '
-			WHERE project_id=' . db_param() . ' AND fixed_in_version=' . db_param();
-        if ( $p_version == 0 ) {
-			$c_version = '';
-        } else {
-			$c_version = version_get_field( $p_version, 'version' );
-        }
-        $t_result = db_query( $t_query, array( (int)$p_project_id, db_prepare_string( $c_version ) ) );
-        while( $t_row = db_fetch_array( $t_result ) ) {
-            $t_id_list[] = $t_row['reporter_id'];
-        }
-    }
-    for( $i=0; $i<count( $t_id_list ); $i++ ) {
-        $t_id_list[$i] = user_get_email( $t_id_list[$i] );
-    }
-
-    // Add users
-    $t_emails = explode( ',', plugin_config_get( 'notify_email', PLUGINS_RELEASEMGT_NOTIFY_EMAIL_DEFAULT ) );
-    foreach( $t_emails as $t_email ) {
-        if ( trim( $t_email ) != '' ) {
-            $t_id_list[] = trim( $t_email );
-        }
-    }
-    $t_email_ids = array_unique( $t_id_list );
-
     if ( defined( 'MANTIS_VERSION' ) ) {
         $t_mantis_version = MANTIS_VERSION;
     } else {
@@ -124,6 +129,10 @@ function releasemgt_plugin_send_email( $p_project_id, $p_version, $p_files, $p_d
     }
     if ( version_compare( $t_mantis_version, '1.1.0a2', '>=' ) ) {
         foreach( $t_email_ids as $t_email ) {
+            if( empty( $t_email ) ){
+                continue;
+            }
+
             $t_recipient = trim( $t_email );
             $t_subject = string_email( trim( $t_subject ) );
             $t_message = string_email_links( trim( $t_message ) );
