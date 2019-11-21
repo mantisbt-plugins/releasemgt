@@ -101,6 +101,7 @@ foreach( $t_releases as $t_release ) {
     }
     echo '</ul>';
     echo "</div>\n";
+    echo "</div>\n";
 }
 
 if ( $t_user_has_upload_level && $t_project_id != ALL_PROJECTS ) {
