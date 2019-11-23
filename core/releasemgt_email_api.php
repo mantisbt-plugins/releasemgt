@@ -80,7 +80,7 @@ function releasemgt_plugin_send_email( $p_project_id, $p_version, $p_files, $p_d
         $t_template['files'][$i]['file_name'] = $p_files[$i]['name'];
         $t_template['files'][$i]['file_description'] = $p_descriptions[$i];
         $t_template['files'][$i]['file_html_description'] = string_display_links( $p_descriptions[$i] );
-        $t_template['files'][$i]['file_url'] = config_get( 'path' ) . plugin_page( 'download' , true) . '&id=' . $p_files_id[$i];
+        $t_template['files'][$i]['file_url'] = config_get( 'path' ) . releasemgt_plugin_page_path( 'download' ) . '?id=' . $p_files_id[$i];
         $t_template['files'][$i]['file_size'] = number_format( $p_files[$i]['size'] );
         $t_template['files'][$i]['file_date'] = date( config_get( 'normal_date_format' ), plugins_releasemgt_file_get_field( $p_files_id[$i], 'date_added'  ) );
     }
