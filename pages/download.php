@@ -73,7 +73,7 @@ if ($require_login)
 // To ensure that only logged user will be able to download file:
         $t_current_user_id = auth_get_current_user_id();
 // Restore g_path
-        config_set_global( $t_path );
+        config_set_global( 'path', $t_path );
 // To ensure that the user will be able to download file only if he/she has at least REPORTER rights to the project:
         access_ensure_project_level( REPORTER, $v_project_id, $t_current_user_id );
 }
