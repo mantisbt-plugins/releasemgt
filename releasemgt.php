@@ -87,7 +87,7 @@ class ReleasemgtPlugin extends MantisPlugin {
     function config() {
                 return array(
                         'download_requires_login'   => true,
-                        'view_threshold' => ADMINISTRATOR,
+                        'view_threshold' => VIEWER,
                 );
         }
 
